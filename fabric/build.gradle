@@ -15,6 +15,7 @@ version = mod_version
 group = maven_group
 archivesBaseName = "${mod_name}-${minecraft_version}-fabric"
 
+
 eclipse {
     project { name = "${mod_name}-${minecraft_version}-fabric" }
 }
@@ -35,11 +36,17 @@ loom {
     }
 }
 
+repositories{
+    maven { url = "https://mvn.devos.one/snapshots/" }
+    maven { url = "https://jitpack.io/" } // for Porting Lib: Mixin Extras, Fabric ASM
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modImplementation(include("io.github.fabricators_of_create:Porting-Lib:1.2.783-beta+1.18.2"))
 }
 
 processResources {
