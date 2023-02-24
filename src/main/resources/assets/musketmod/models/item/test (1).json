@@ -1,0 +1,22 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "teste",
+	"textures": {
+		"0": "item/musket",
+		"particle": "item/musket"
+	},
+	"elements": [
+		{
+			"from": [7, 0, 7],
+			"to": [9, 10, 9],
+			"faces": {
+				"north": {"uv": [0, 0, 2, 10], "texture": "#0"},
+				"east": {"uv": [2, 0, 4, 10], "texture": "#0"},
+				"south": {"uv": [4, 0, 6, 10], "texture": "#0"},
+				"west": {"uv": [6, 0, 8, 10], "texture": "#0"},
+				"up": {"uv": [10, 2, 8, 0], "texture": "#0"},
+				"down": {"uv": [10, 2, 8, 4], "texture": "#0"}
+			}
+		}
+	]
+}
