@@ -1,7 +1,7 @@
-package ewewukek.musketmod;
+package ewewukek.musketmod.shell;
 
-import java.util.Optional;
-
+import ewewukek.musketmod.MusketMod;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -20,16 +20,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 
-public class BulletEntity extends AbstractHurtingProjectile {
-    public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
+import java.util.Optional;
+
+public class ShellEntity extends AbstractHurtingProjectile {
+    public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(ShellEntity.class, EntityDataSerializers.FLOAT);
 
     public static final double MIN_DAMAGE = 0.5;
     public static final double GRAVITY = 0.05;
@@ -44,19 +43,19 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public float distanceTravelled;
     public short tickCounter;
 
-    public BulletEntity(EntityType<BulletEntity>entityType, Level world) {
+    public ShellEntity(EntityType<ShellEntity>entityType, Level world) {
         super(entityType, world);
     }
 
-    public BulletEntity(Level world) {
-        this(MusketMod.BULLET_ENTITY_TYPE, world);
+    public ShellEntity(Level world) {
+        this(MusketMod.SHELL_ENTITY_TYPE, world);
     }
 
     public boolean isFirstTick() {
         return tickCounter == 0;
     }
 
-    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
+    public DamageSource causeMusketDamage(ShellEntity bullet, Entity attacker) {
         return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
     }
 
@@ -171,6 +170,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             random.nextGaussian() * 0.01
                         );
                     }
+                    //put explosion code here
+                    int posX = (int)pos.x;
+                    int posY = (int)pos.y;
+                    int posZ = (int)pos.z;
+                    BlockPos BP = new BlockPos(posX, posY, posZ);
+                    level.setBlock(BP, Blocks.GOLD_BLOCK.defaultBlockState(), 1,1);
                 }
                 discard();
             }

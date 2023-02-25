@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import ewewukek.musketmod.bullet.BulletEntity;
+import ewewukek.musketmod.shell.ShellEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -33,6 +35,11 @@ public class MusketMod implements ModInitializer {
     public static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("musketmod.txt");
 
     public static final EntityType<BulletEntity> BULLET_ENTITY_TYPE = FabricEntityTypeBuilder.<BulletEntity>create(MobCategory.MISC, BulletEntity::new)
+            .dimensions(EntityDimensions.fixed(0.5F, 0.5F))
+            .trackRangeBlocks(64).trackedUpdateRate(5)
+            .forceTrackedVelocityUpdates(false)
+            .build();
+    public static final EntityType<ShellEntity> SHELL_ENTITY_TYPE = FabricEntityTypeBuilder.<ShellEntity>create(MobCategory.MISC, ShellEntity::new)
             .dimensions(EntityDimensions.fixed(0.5F, 0.5F))
             .trackRangeBlocks(64).trackedUpdateRate(5)
             .forceTrackedVelocityUpdates(false)

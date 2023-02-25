@@ -1,11 +1,11 @@
-package ewewukek.musketmod;
+package ewewukek.musketmod.shell;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
-
+import ewewukek.musketmod.MusketMod;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-public class BulletRenderer extends EntityRenderer<BulletEntity> {
+public class BulletRenderer extends EntityRenderer<ShellEntity> {
     public static final ResourceLocation TEXTURE = new ResourceLocation(MusketMod.MODID + ":textures/entity/bullet.png");
 
     public BulletRenderer(EntityRendererProvider.Context ctx) {
@@ -21,12 +21,12 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(BulletEntity bullet) {
+    public ResourceLocation getTextureLocation(ShellEntity bullet) {
         return TEXTURE;
     }
 
     @Override
-    public void render(BulletEntity bullet, float yaw, float partialTicks, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
+    public void render(ShellEntity bullet, float yaw, float partialTicks, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
         if (bullet.isFirstTick()) return;
 
         matrixStack.pushPose();
