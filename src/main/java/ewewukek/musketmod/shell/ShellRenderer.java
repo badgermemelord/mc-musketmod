@@ -13,21 +13,21 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-public class BulletRenderer extends EntityRenderer<ShellEntity> {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(MusketMod.MODID + ":textures/entity/bullet.png");
+public class ShellRenderer extends EntityRenderer<ShellEntity> {
+    public static final ResourceLocation TEXTURE = new ResourceLocation(MusketMod.MODID + ":textures/entity/shell.png");
 
-    public BulletRenderer(EntityRendererProvider.Context ctx) {
+    public ShellRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(ShellEntity bullet) {
+    public ResourceLocation getTextureLocation(ShellEntity shell) {
         return TEXTURE;
     }
 
     @Override
-    public void render(ShellEntity bullet, float yaw, float partialTicks, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
-        if (bullet.isFirstTick()) return;
+    public void render(ShellEntity shell, float yaw, float partialTicks, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
+        if (shell.isFirstTick()) return;
 
         matrixStack.pushPose();
 
@@ -40,7 +40,7 @@ public class BulletRenderer extends EntityRenderer<ShellEntity> {
         Matrix4f positionMatrix = entry.pose();
         Matrix3f normalMatrix = entry.normal();
 
-        VertexConsumer builder = render.getBuffer(RenderType.entityCutout(getTextureLocation(bullet)));
+        VertexConsumer builder = render.getBuffer(RenderType.entityCutout(getTextureLocation(shell)));
 
         addVertex(builder, positionMatrix, normalMatrix, -1, -1, 0, 0, 1, 0, 0, 1, packedLight);
         addVertex(builder, positionMatrix, normalMatrix,  1, -1, 0, 1, 1, 0, 0, 1, packedLight);

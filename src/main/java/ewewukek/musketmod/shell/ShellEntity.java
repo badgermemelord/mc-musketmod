@@ -16,9 +16,11 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,8 +57,8 @@ public class ShellEntity extends AbstractHurtingProjectile {
         return tickCounter == 0;
     }
 
-    public DamageSource causeMusketDamage(ShellEntity bullet, Entity attacker) {
-        return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
+    public DamageSource causeMusketDamage(ShellEntity shell, Entity attacker) {
+        return (new IndirectEntityDamageSource("musket", shell, attacker)).setProjectile();
     }
 
     public void discardOnNextTick() {
@@ -65,6 +67,7 @@ public class ShellEntity extends AbstractHurtingProjectile {
 
     @Override
     public void tick() {
+        LivingEntity attacker = null;
         if (++tickCounter >= LIFETIME || distanceTravelled > maxDistance) {
             discard();
             return;
@@ -154,6 +157,8 @@ public class ShellEntity extends AbstractHurtingProjectile {
             if (!level.isClientSide) {
                 onHit(hitResult);
                 discardOnNextTick();
+                Vec3 pos = hitResult.getLocation();
+                level.explode(attacker, pos.x, pos.y, pos.z, 4.0F, Explosion.BlockInteraction.DESTROY);
 
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {
                 int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);

@@ -1,6 +1,7 @@
 package ewewukek.musketmod;
 
 import ewewukek.musketmod.bullet.BulletRenderer;
+import ewewukek.musketmod.shell.ShellRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
@@ -15,6 +16,7 @@ public class ClientSetup implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         EntityRendererRegistry.INSTANCE.register(MusketMod.BULLET_ENTITY_TYPE, (ctx) -> new BulletRenderer(ctx));
+        EntityRendererRegistry.INSTANCE.register(MusketMod.SHELL_ENTITY_TYPE, (ctx) -> new ShellRenderer(ctx));
 
         ClampedItemPropertyFunction loaded = (stack, world, player, seed) -> {
             return GunItem.isLoaded(stack) ? 1 : 0;

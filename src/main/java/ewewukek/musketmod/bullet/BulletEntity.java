@@ -174,11 +174,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             random.nextGaussian() * 0.01
                         );
                     }
-                    int posX = (int)pos.x;
-                    int posY = (int)pos.y;
-                    int posZ = (int)pos.z;
-                    BlockPos BP = new BlockPos(posX, posY, posZ);
-                    level.setBlock(BP, Blocks.GOLD_BLOCK.defaultBlockState(), 1,1);
                 }
                 discard();
             }

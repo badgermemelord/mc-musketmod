@@ -56,6 +56,7 @@ public class MusketMod implements ModInitializer {
         Registry.register(Registry.ITEM, new ResourceLocation(MODID, "cartridge"), Items.CARTRIDGE);
 
         Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(MODID, "bullet"), BULLET_ENTITY_TYPE);
+        Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(MODID, "shell"), SHELL_ENTITY_TYPE);
 
         Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
         Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);

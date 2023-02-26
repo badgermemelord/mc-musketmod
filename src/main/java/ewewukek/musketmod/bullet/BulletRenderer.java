@@ -21,6 +21,7 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         super(ctx);
     }
 
+
     @Override
     public ResourceLocation getTextureLocation(BulletEntity bullet) {
         return TEXTURE;
