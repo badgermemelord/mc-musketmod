@@ -2,7 +2,8 @@ package ewewukek.musketmod;
 
 import java.util.Random;
 
-import ewewukek.musketmod.bullet.BulletEntity;
+import ewewukek.musketmod.entity.bullet.BulletEntity;
+import ewewukek.musketmod.item.Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.TextComponent;

@@ -4,12 +4,17 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import ewewukek.musketmod.bullet.BulletEntity;
-import ewewukek.musketmod.shell.ShellEntity;
+import ewewukek.musketmod.block.Blocks;
+import ewewukek.musketmod.block.entity.CannonBlockEntity;
+import ewewukek.musketmod.entity.ModBlockEntities;
+import ewewukek.musketmod.entity.bullet.BulletEntity;
+import ewewukek.musketmod.item.Items;
+import ewewukek.musketmod.entity.shell.ShellEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -49,15 +54,25 @@ public class MusketMod implements ModInitializer {
     public void onInitialize() {
         Config.reload();
 
+
+
+        //Items
         Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
         Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket_with_bayonet"), Items.MUSKET_WITH_BAYONET);
         Registry.register(Registry.ITEM, new ResourceLocation(MODID, "pistol"), Items.PISTOL);
         Registry.register(Registry.ITEM, new ResourceLocation(MODID, "rifle"), Items.RIFLE);
         Registry.register(Registry.ITEM, new ResourceLocation(MODID, "cartridge"), Items.CARTRIDGE);
-
+        //BlockItems
+        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "cannon_block"), Items.CANNON_BLOCK);
+        //Entities
         Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(MODID, "bullet"), BULLET_ENTITY_TYPE);
         Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(MODID, "shell"), SHELL_ENTITY_TYPE);
-
+        //BlockEntities
+        //Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation(MODID, "cannon_block"), ModBlockEntities.CANNON_BLOCK);
+        Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation(MODID, "cannon_block"), FabricBlockEntityTypeBuilder.create(CannonBlockEntity::new, Blocks.CANNON_BLOCK).build(null));
+        //Blocks
+        Registry.register(Registry.BLOCK, new ResourceLocation(MODID, "cannon_block"), Blocks.CANNON_BLOCK);
+        //Sounds
         Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
         Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);
         Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_LOAD_2.getLocation(), Sounds.MUSKET_LOAD_2);

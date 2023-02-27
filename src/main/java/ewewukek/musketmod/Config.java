@@ -8,7 +8,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.Locale;
 import java.util.Scanner;
 
-import ewewukek.musketmod.bullet.BulletEntity;
+import ewewukek.musketmod.entity.bullet.BulletEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -1,7 +1,8 @@
 package ewewukek.musketmod;
 
-import ewewukek.musketmod.bullet.BulletRenderer;
-import ewewukek.musketmod.shell.ShellRenderer;
+import ewewukek.musketmod.entity.bullet.BulletRenderer;
+import ewewukek.musketmod.item.Items;
+import ewewukek.musketmod.entity.shell.ShellRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;

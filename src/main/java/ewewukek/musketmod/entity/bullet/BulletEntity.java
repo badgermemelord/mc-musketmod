@@ -1,7 +1,8 @@
-package ewewukek.musketmod.shell;
+package ewewukek.musketmod.entity.bullet;
+
+import java.util.Optional;
 
 import ewewukek.musketmod.MusketMod;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,21 +17,20 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
-import java.util.Optional;
-
-public class ShellEntity extends AbstractHurtingProjectile {
-    public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(ShellEntity.class, EntityDataSerializers.FLOAT);
+public class BulletEntity extends AbstractHurtingProjectile {
+    public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
 
     public static final double MIN_DAMAGE = 0.5;
     public static final double GRAVITY = 0.05;
@@ -45,20 +45,20 @@ public class ShellEntity extends AbstractHurtingProjectile {
     public float distanceTravelled;
     public short tickCounter;
 
-    public ShellEntity(EntityType<ShellEntity>entityType, Level world) {
+    public BulletEntity(EntityType<BulletEntity>entityType, Level world) {
         super(entityType, world);
     }
 
-    public ShellEntity(Level world) {
-        this(MusketMod.SHELL_ENTITY_TYPE, world);
+    public BulletEntity(Level world) {
+        this(MusketMod.BULLET_ENTITY_TYPE, world);
     }
 
     public boolean isFirstTick() {
         return tickCounter == 0;
     }
 
-    public DamageSource causeMusketDamage(ShellEntity shell, Entity attacker) {
-        return (new IndirectEntityDamageSource("musket", shell, attacker)).setProjectile();
+    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
+        return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
     }
 
     public void discardOnNextTick() {
@@ -67,7 +67,6 @@ public class ShellEntity extends AbstractHurtingProjectile {
 
     @Override
     public void tick() {
-        LivingEntity attacker = null;
         if (++tickCounter >= LIFETIME || distanceTravelled > maxDistance) {
             discard();
             return;
@@ -157,8 +156,6 @@ public class ShellEntity extends AbstractHurtingProjectile {
             if (!level.isClientSide) {
                 onHit(hitResult);
                 discardOnNextTick();
-                Vec3 pos = hitResult.getLocation();
-                level.explode(attacker, pos.x, pos.y, pos.z, 4.0F, Explosion.BlockInteraction.DESTROY);
 
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {
                 int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
@@ -175,12 +172,6 @@ public class ShellEntity extends AbstractHurtingProjectile {
                             random.nextGaussian() * 0.01
                         );
                     }
-                    //put explosion code here
-                    int posX = (int)pos.x;
-                    int posY = (int)pos.y;
-                    int posZ = (int)pos.z;
-                    BlockPos BP = new BlockPos(posX, posY, posZ);
-                    level.setBlock(BP, Blocks.GOLD_BLOCK.defaultBlockState(), 1,1);
                 }
                 discard();
             }

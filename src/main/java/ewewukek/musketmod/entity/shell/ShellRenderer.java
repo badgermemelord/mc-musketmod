@@ -1,4 +1,4 @@
-package ewewukek.musketmod.shell;
+package ewewukek.musketmod.entity.shell;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
