@@ -4,6 +4,7 @@ import com.mojang.math.Quaternion;
 import ewewukek.musketmod.GunItem;
 import ewewukek.musketmod.MusketMod;
 import ewewukek.musketmod.entity.bullet.BulletEntity;
+import ewewukek.musketmod.entity.shell.ShellEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -130,17 +131,17 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
 
         Vec3 origin = new Vec3(pos.getX()+0.5, pos.getY()+1, pos.getZ()+0.5);
 
-        BulletEntity bullet = new BulletEntity(level);
-        bullet.setOwner(shooter);
-        bullet.setPos(origin);
-        bullet.setInitialSpeed(bulletSpeed());
-        bullet.setDeltaMovement(motion);
+        ShellEntity shell = new ShellEntity(level);
+        shell.setOwner(shooter);
+        shell.setPos(origin);
+        shell.setInitialSpeed(bulletSpeed());
+        shell.setDeltaMovement(motion);
         float t = random.nextFloat();
-        bullet.damageMultiplier = t * damageMultiplierMin() + (1 - t) * damageMultiplierMax();
+        shell.damageMultiplier = t * damageMultiplierMin() + (1 - t) * damageMultiplierMax();
         //bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
-        bullet.ignoreInvulnerableTime = false;
+        shell.ignoreInvulnerableTime = false;
 
-        level.addFreshEntity(bullet);
+        level.addFreshEntity(shell);
         MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);
     }
 
