@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "musketmod:block/cannon_side",
+    "front": "musketmod:block/cannon_front",
+    "side": "musketmod:block/cannon_side"
+  }
+}

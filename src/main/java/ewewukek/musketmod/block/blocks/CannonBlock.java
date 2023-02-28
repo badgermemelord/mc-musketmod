@@ -1,53 +1,60 @@
 package ewewukek.musketmod.block.blocks;
 
+import com.mojang.math.Quaternion;
 import ewewukek.musketmod.GunItem;
 import ewewukek.musketmod.MusketMod;
 import ewewukek.musketmod.entity.bullet.BulletEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
+
 public class CannonBlock extends BaseEntityBlock implements EntityBlock {
     public CannonBlock(Properties properties) {
         super(properties);
     }
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+    }
+    @Override
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+
 
 
     //Block Entity stuff
-
-    float x = 1;
-    float z = 1;
-    float y = 1;
-
-    @Override
-    public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
-    }
-    @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!world.isClientSide) {
-            System.out.println("success");
-            //Vec3 front = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
-            Vec3 front = new Vec3(0,0,0.5);
-            cannonFire(player, front, front, pos);
-        }
-        return InteractionResult.SUCCESS;
-    }
 
     float bulletStdDev() {
         return 0;
@@ -61,6 +68,36 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
     float damageMultiplierMax() {
         return 101;
     }
+    float aimAdjustElevation() {
+        return 0;
+    }
+    float aimAdjustYaw() {
+        return 0;
+    }
+
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
+    }
+    @Override
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!world.isClientSide) {
+            Vec3i frontI = state.getValue(FACING).getNormal();
+            Vec3 front = new Vec3((float)frontI.getX(), (float)frontI.getY(), (float)frontI.getZ());
+            Vec3 aimVector = adjustAim(front);
+
+            cannonFire(player, aimVector, aimVector, pos);
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    public Vec3 adjustAim(Vec3 front) {
+        //TODO actual aim code
+        Vec3 aimVector = front;
+        return aimVector;
+    }
+
 
 
     public void cannonFire(LivingEntity shooter, Vec3 direction, Vec3 smokeOriginOffset, BlockPos pos) {

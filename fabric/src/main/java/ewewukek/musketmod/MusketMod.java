@@ -68,7 +68,6 @@ public class MusketMod implements ModInitializer {
         Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(MODID, "bullet"), BULLET_ENTITY_TYPE);
         Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(MODID, "shell"), SHELL_ENTITY_TYPE);
         //BlockEntities
-        //Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation(MODID, "cannon_block"), ModBlockEntities.CANNON_BLOCK);
         Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation(MODID, "cannon_block"), FabricBlockEntityTypeBuilder.create(CannonBlockEntity::new, Blocks.CANNON_BLOCK).build(null));
         //Blocks
         Registry.register(Registry.BLOCK, new ResourceLocation(MODID, "cannon_block"), Blocks.CANNON_BLOCK);
