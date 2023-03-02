@@ -27,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static java.lang.Math.acos;
+import static java.lang.Math.asin;
 import static net.minecraft.util.Mth.cos;
 import static net.minecraft.util.Mth.sin;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
@@ -72,10 +74,10 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
         return 101;
     }
     float aimAdjustElevation() {
-        return 0;
+        return 45;
     }
     float aimAdjustYaw() {
-        return 0;
+        return 45;
     }
 
 
@@ -98,16 +100,19 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
 
     public Vec3 adjustAim(Vec3 front) {
         //TODO actual aim code
-        float aimX = sin(aimAdjustYaw());
-        float aimZ = cos(aimAdjustYaw());
+        float normalAngle = (float) (asin(front.x)+(acos(front.x)));
+        float finalAngle = normalAngle+aimAdjustYaw();
+        float aimX = sin(finalAngle);
+        float aimZ = cos(finalAngle);
         float aimY = sin(aimAdjustElevation());
-        Vec3 aimVector = front;
+
+        Vec3 aimVector = new Vec3(aimX, aimY,aimZ );
         return aimVector;
     }
 
     public Vec3 getOrigin(Vec3 front, BlockPos pos) {
         Vec3 posCenter = new Vec3(pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5);
-        return new Vec3(posCenter.x+front.x, posCenter.y+front.y, posCenter.z+front.z);
+        return new Vec3(posCenter.x+front.x, posCenter.y+1, posCenter.z+front.z);
     }
 
 
