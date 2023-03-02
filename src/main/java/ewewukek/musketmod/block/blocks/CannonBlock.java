@@ -27,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static net.minecraft.util.Mth.cos;
+import static net.minecraft.util.Mth.sin;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 public class CannonBlock extends BaseEntityBlock implements EntityBlock {
@@ -87,21 +89,30 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
             Vec3i frontI = state.getValue(FACING).getNormal();
             Vec3 front = new Vec3((float)frontI.getX(), (float)frontI.getY(), (float)frontI.getZ());
             Vec3 aimVector = adjustAim(front);
+            Vec3 origin = getOrigin(front, pos);
 
-            cannonFire(player, aimVector, aimVector, pos);
+            cannonFire(player, aimVector, aimVector, pos, origin);
         }
         return InteractionResult.SUCCESS;
     }
 
     public Vec3 adjustAim(Vec3 front) {
         //TODO actual aim code
+        float aimX = sin(aimAdjustYaw());
+        float aimZ = cos(aimAdjustYaw());
+        float aimY = sin(aimAdjustElevation());
         Vec3 aimVector = front;
         return aimVector;
     }
 
+    public Vec3 getOrigin(Vec3 front, BlockPos pos) {
+        Vec3 posCenter = new Vec3(pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5);
+        return new Vec3(posCenter.x+front.x, posCenter.y+front.y, posCenter.z+front.z);
+    }
 
 
-    public void cannonFire(LivingEntity shooter, Vec3 direction, Vec3 smokeOriginOffset, BlockPos pos) {
+
+    public void cannonFire(LivingEntity shooter, Vec3 direction, Vec3 smokeOriginOffset, BlockPos pos, Vec3 origin) {
 
 
         Random random = shooter.getRandom();
@@ -125,11 +136,11 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
         }
 
         Vec3 motion = direction.scale(Mth.cos(spread))
-                .add(n1.scale(Mth.sin(spread) * Mth.sin(angle))) // signs are not important for random angle
-                .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
+                .add(n1.scale(sin(spread) * sin(angle))) // signs are not important for random angle
+                .add(n2.scale(sin(spread) * Mth.cos(angle)))
                 .scale(bulletSpeed());
 
-        Vec3 origin = new Vec3(pos.getX()+0.5, pos.getY()+1, pos.getZ()+0.5);
+        //Vec3 origin = new Vec3(pos.getX()+0.5, pos.getY()+1, pos.getZ()+0.5);
 
         ShellEntity shell = new ShellEntity(level);
         shell.setOwner(shooter);

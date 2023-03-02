@@ -37,6 +37,7 @@ public class Config {
     public double pistolDamageMin;
     public double pistolDamageMax;
     public double pistolReloadDuration;
+    public double cannonBulletSpeed;
 
     public static void reload() {
         INSTANCE.setDefaults();
@@ -89,6 +90,8 @@ public class Config {
         pistolDamageMin = 14;
         pistolDamageMax = 15;
         pistolReloadDuration = 240;
+        //cannon values
+        cannonBulletSpeed = 50;
     }
 
     private void load() {
