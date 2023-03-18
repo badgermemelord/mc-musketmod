@@ -38,7 +38,7 @@ public class ShellEntity extends AbstractHurtingProjectile {
     public static final double WATER_FRICTION = 0.6;
     public static final short LIFETIME = 200;
 
-    public static double maxDistance;
+    public static double maxDistance = 256;
 
     public float damageMultiplier;
     public boolean ignoreInvulnerableTime;

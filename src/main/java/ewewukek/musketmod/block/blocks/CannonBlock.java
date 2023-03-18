@@ -27,8 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-import static java.lang.Math.acos;
-import static java.lang.Math.asin;
+import static java.lang.Math.*;
 import static net.minecraft.util.Mth.cos;
 import static net.minecraft.util.Mth.sin;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
@@ -74,10 +73,10 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
         return 101;
     }
     float aimAdjustElevation() {
-        return 45;
+        return (float) (0 * PI / 180);
     }
     float aimAdjustYaw() {
-        return 45;
+        return (float) (45 * PI / 180);
     }
 
 
@@ -90,7 +89,7 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
         if (!world.isClientSide) {
             Vec3i frontI = state.getValue(FACING).getNormal();
             Vec3 front = new Vec3((float)frontI.getX(), (float)frontI.getY(), (float)frontI.getZ());
-            Vec3 aimVector = adjustAim(front);
+            Vec3 aimVector = adjustAim(state.getValue(FACING));
             Vec3 origin = getOrigin(front, pos);
 
             cannonFire(player, aimVector, aimVector, pos, origin);
@@ -98,11 +97,13 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
         return InteractionResult.SUCCESS;
     }
 
-    public Vec3 adjustAim(Vec3 front) {
+    public Vec3 adjustAim(Direction facing) {
         //TODO actual aim code
-        float normalAngle = (float) (asin(front.x)+(acos(front.x)));
+        //float normalAngle = (float) (asin(front.x)+(acos(front.x)));
+        float normalAngle = (float) (facing.toYRot()* PI / 180);
         float finalAngle = normalAngle+aimAdjustYaw();
-        float aimX = sin(finalAngle);
+        float aimX = -sin(finalAngle);
+        System.out.println(sin(finalAngle));
         float aimZ = cos(finalAngle);
         float aimY = sin(aimAdjustElevation());
 
@@ -112,7 +113,7 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
 
     public Vec3 getOrigin(Vec3 front, BlockPos pos) {
         Vec3 posCenter = new Vec3(pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5);
-        return new Vec3(posCenter.x+front.x, posCenter.y+1, posCenter.z+front.z);
+        return new Vec3(posCenter.x+front.x, posCenter.y+0.5, posCenter.z+front.z);
     }
 
 
@@ -123,7 +124,7 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
         Random random = shooter.getRandom();
         Level level = shooter.level;
 
-        float angle = (float) Math.PI * 2 * random.nextFloat();
+        float angle = (float) PI * 2 * random.nextFloat();
         float gaussian = Math.abs((float) random.nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
@@ -158,7 +159,7 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
         shell.ignoreInvulnerableTime = false;
 
         level.addFreshEntity(shell);
-        MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);
+        MusketMod.sendSmokeEffect(shooter, origin, direction);
     }
 
     @Nullable
