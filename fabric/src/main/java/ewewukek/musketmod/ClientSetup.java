@@ -3,9 +3,13 @@ package ewewukek.musketmod;
 import ewewukek.musketmod.entity.bullet.BulletRenderer;
 import ewewukek.musketmod.item.Items;
 import ewewukek.musketmod.entity.shell.ShellRenderer;
+import ewewukek.musketmod.screen.CannonBlockAbstractContainerMenu;
+import ewewukek.musketmod.screen.CannonBlockScreen;
+import ewewukek.musketmod.screen.ModAbstractContainerMenus;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
@@ -33,5 +37,6 @@ public class ClientSetup implements ClientModInitializer {
             Vec3 direction = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
             GunItem.fireParticles(world, origin, direction);
         });
+        ScreenRegistry.register(ModAbstractContainerMenus.CANNON_BLOCK_ABSTRACT_CONTAINER_MENU, CannonBlockScreen::new);
     }
 }
