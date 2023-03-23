@@ -1,6 +1,7 @@
 package ewewukek.musketmod;
 
 import ewewukek.musketmod.entity.bullet.BulletRenderer;
+import ewewukek.musketmod.event.KeyInputHandler;
 import ewewukek.musketmod.item.Items;
 import ewewukek.musketmod.entity.shell.ShellRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -33,5 +34,6 @@ public class ClientSetup implements ClientModInitializer {
             Vec3 direction = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
             GunItem.fireParticles(world, origin, direction);
         });
+        KeyInputHandler.register();
     }
 }

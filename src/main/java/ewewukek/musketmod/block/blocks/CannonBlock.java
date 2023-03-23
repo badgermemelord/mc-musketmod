@@ -1,9 +1,6 @@
 package ewewukek.musketmod.block.blocks;
 
-import com.mojang.math.Quaternion;
-import ewewukek.musketmod.GunItem;
 import ewewukek.musketmod.MusketMod;
-import ewewukek.musketmod.entity.bullet.BulletEntity;
 import ewewukek.musketmod.entity.shell.ShellEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,6 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PlayerRideable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -30,9 +28,8 @@ import java.util.Random;
 import static java.lang.Math.*;
 import static net.minecraft.util.Mth.cos;
 import static net.minecraft.util.Mth.sin;
-import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
-public class CannonBlock extends BaseEntityBlock implements EntityBlock {
+public class CannonBlock extends BaseEntityBlock implements EntityBlock, PlayerRideable {
     public CannonBlock(Properties properties) {
         super(properties);
     }
@@ -72,11 +69,13 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
     float damageMultiplierMax() {
         return 101;
     }
-    float aimAdjustElevation() {
-        return (float) (0 * PI / 180);
+    static float aimElevation = 0;
+    static float aimElevationToRadians() {
+        return (float) (aimElevation * PI / 180);
     }
-    float aimAdjustYaw() {
-        return (float) (45 * PI / 180);
+    static float aimYaw = 0;
+    static float aimYawToRadians() {
+        return (float) (aimYaw * PI / 180);
     }
 
 
@@ -86,29 +85,41 @@ public class CannonBlock extends BaseEntityBlock implements EntityBlock {
     }
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!world.isClientSide) {
+        //player.startRiding(this);
+        if (world.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+        else {
+            return InteractionResult.CONSUME;
+        }
+/*        if (!world.isClientSide) {
             Vec3i frontI = state.getValue(FACING).getNormal();
             Vec3 front = new Vec3((float)frontI.getX(), (float)frontI.getY(), (float)frontI.getZ());
-            Vec3 aimVector = adjustAim(state.getValue(FACING));
+            Vec3 aimVector = getAimVector(state.getValue(FACING));
             Vec3 origin = getOrigin(front, pos);
 
             cannonFire(player, aimVector, aimVector, pos, origin);
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;*/
     }
 
-    public Vec3 adjustAim(Direction facing) {
+    public static void aimIncreaseYaw() {aimYaw += 1;}
+    public static void aimDecreaseYaw() {aimYaw -= 1;}
+    public static void aimIncreaseElevation() {aimElevation += 1;}
+    public static void aimDecreaseElevation() {aimElevation -= 1;}
+
+
+    public Vec3 getAimVector(Direction facing) {
         //TODO actual aim code
         //float normalAngle = (float) (asin(front.x)+(acos(front.x)));
         float normalAngle = (float) (facing.toYRot()* PI / 180);
-        float finalAngle = normalAngle+aimAdjustYaw();
+        float finalAngle = normalAngle+aimYawToRadians();
         float aimX = -sin(finalAngle);
-        System.out.println(sin(finalAngle));
+        //System.out.println(sin(finalAngle));
         float aimZ = cos(finalAngle);
-        float aimY = sin(aimAdjustElevation());
+        float aimY = sin(aimElevationToRadians());
 
-        Vec3 aimVector = new Vec3(aimX, aimY,aimZ );
-        return aimVector;
+        return new Vec3(aimX, aimY,aimZ );
     }
 
     public Vec3 getOrigin(Vec3 front, BlockPos pos) {
