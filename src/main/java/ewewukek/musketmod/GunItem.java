@@ -144,23 +144,31 @@ public abstract class GunItem extends Item {
     @Override
     public void onUseTick(Level world, LivingEntity entity, ItemStack stack, int timeLeft) {
 
-        if (b < stage4Start && world.isClientSide) {
+        if (b < stage4Start) {
             if (a == 20 && b < stage2Start) {
-                a = 0;
-                b++;
+                if (!world.isClientSide) {
+                    a = 0;
+                    b++;
+                }
                 entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
 
             } else if (a == 20 && b < stage3Start) {
-                a = 0;
-                b++;
+                if (!world.isClientSide) {
+                    a = 0;
+                    b++;
+                }
                 entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
 
             } else if (a == 20) {
-                a = 0;
-                b++;
+                if (!world.isClientSide) {
+                    a = 0;
+                    b++;
+                }
                 entity.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
             }
-            a++;
+            if (!world.isClientSide) {
+                a++;
+            }
         }
 
         if (world.isClientSide && entity instanceof Player) {

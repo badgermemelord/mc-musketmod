@@ -2,6 +2,7 @@ package ewewukek.musketmod;
 
 import java.util.Optional;
 
+import ewewukek.musketmod.mechanics.OnSolidHit;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -172,6 +173,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
                         );
                     }
                 }
+                OnSolidHit.blockHit(hitResult, motion);
+
                 discard();
             }
         }
