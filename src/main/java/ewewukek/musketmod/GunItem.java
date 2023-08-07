@@ -2,11 +2,20 @@ package ewewukek.musketmod;
 
 import java.util.Random;
 
+import ewewukek.musketmod.networking.ModPackets;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -19,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
@@ -144,31 +154,25 @@ public abstract class GunItem extends Item {
     @Override
     public void onUseTick(Level world, LivingEntity entity, ItemStack stack, int timeLeft) {
 
-        if (b < stage4Start) {
+        if (b < stage4Start && !world.isClientSide) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
             if (a == 20 && b < stage2Start) {
-                if (!world.isClientSide) {
                     a = 0;
                     b++;
-                }
-                entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
-
+                    buf.writeInt(0);
+                    ServerPlayNetworking.send((ServerPlayer) entity, ModPackets.CLIENT_PLAY_MUSKET_SOUND, buf);
             } else if (a == 20 && b < stage3Start) {
-                if (!world.isClientSide) {
                     a = 0;
                     b++;
-                }
-                entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
-
+                    buf.writeInt(1);
+                    ServerPlayNetworking.send((ServerPlayer) entity, ModPackets.CLIENT_PLAY_MUSKET_SOUND, buf);
             } else if (a == 20) {
-                if (!world.isClientSide) {
                     a = 0;
                     b++;
-                }
-                entity.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
+                    buf.writeInt(2);
+                    ServerPlayNetworking.send((ServerPlayer) entity, ModPackets.CLIENT_PLAY_MUSKET_SOUND, buf);
             }
-            if (!world.isClientSide) {
                 a++;
-            }
         }
 
         if (world.isClientSide && entity instanceof Player) {
