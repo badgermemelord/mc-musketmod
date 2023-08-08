@@ -5,23 +5,33 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import java.lang.Math;
+import java.util.Random;
 
 public class OnSolidHit {
 
     public static boolean shouldRicochet(HitResult hitResult, Vec3 projectilePath) {
         double ricochetThreshold = 40.0;
+        Random random = new Random();
+        double rand = random.nextDouble()+1;
+
         BlockHitResult blockHitResult = ((BlockHitResult) hitResult);
         Vec3 faceNormalVec = getNormalFromFacing(blockHitResult.getDirection());
         double impactAngle = getTrajectoryToNormalAngle(projectilePath, faceNormalVec);
-        System.out.println("l'amonge: " + impactAngle);
-        return impactAngle < ricochetThreshold;
+
+        double randomRicochetValue = impactAngle*rand;
+        if (randomRicochetValue <= ricochetThreshold && projectilePath.length() > 3) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
     public static Vec3 getRicochetVector(Vec3 trajectory, HitResult hitResult) {
         BlockHitResult blockHitResult = ((BlockHitResult) hitResult);
         Vec3 normal = getNormalFromFacing(blockHitResult.getDirection());
-        System.out.println("le normal: " + normal);
+        double impactAngle = getTrajectoryToNormalAngle(trajectory, normal);
+        double remainingVelocity = Math.cos(impactAngle*(Math.PI/180));
 
         double a0 = normal.x;
         double b0 = normal.y;
@@ -30,15 +40,14 @@ public class OnSolidHit {
         boolean a = a0 != 0.0;
         boolean b = b0 != 0.0;
         boolean c = c0 != 0.0;
-        System.out.println("abc: " + a + " " + b + " " + c);
 
         double a1 = trajectory.x;
         double b1 = trajectory.y;
         double c1 = trajectory.z;
 
-        if (a) a1 = -0.8*a1;
-        if (b) b1 = -0.8*b1;
-        if (c) c1 = -0.8*c1;
+        if (a) a1 = -remainingVelocity*a1;
+        if (b) b1 = -remainingVelocity*b1;
+        if (c) c1 = -remainingVelocity*c1;
 
 
         return new Vec3(a1, b1, c1);

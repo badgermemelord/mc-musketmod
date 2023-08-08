@@ -152,48 +152,51 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
         }
 
-        if (hitResult.getType() != HitResult.Type.MISS) {
-            if (hitResult.getType() == HitResult.Type.BLOCK) {
-                if (!level.isClientSide) {
-                    if (OnSolidHit.shouldRicochet(hitResult, motion)) {
-                        System.out.println("old motion: " + motion);
-                        Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
-                        motion = newMotionVector;
-                        System.out.println("new vec: " + motion);
-                        System.out.println("did all ricochet code");
-                    } else {
-                        onHit(hitResult);
-                        discardOnNextTick();
-                    }
+        if (hitResult.getType() == HitResult.Type.BLOCK) {
+            if (!level.isClientSide) {
+                if (OnSolidHit.shouldRicochet(hitResult, motion)) {
+                    System.out.println("old motion: " + motion);
+                    Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
+                    motion = newMotionVector;
+                    System.out.println("new vec: " + motion);
+                    System.out.println("did all ricochet code");
+                } else {
+                    onHit(hitResult);
+                    discardOnNextTick();
+                }
 
-                } else if (hitResult.getType() == HitResult.Type.BLOCK) {
-                    int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
-                    if (impactParticleCount > 0) {
-                        BlockState blockstate = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
-                        BlockParticleOption particleOption = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-                        Vec3 pos = hitResult.getLocation();
-                        for (int i = 0; i < impactParticleCount; ++i) {
-                            level.addParticle(
-                                    particleOption,
-                                    pos.x, pos.y, pos.z,
-                                    random.nextGaussian() * 0.01,
-                                    random.nextGaussian() * 0.01,
-                                    random.nextGaussian() * 0.01
-                            );
-                        }
-                    }
-                    if (OnSolidHit.shouldRicochet(hitResult, motion)) {
-                        System.out.println("old motion: " + motion);
-                        Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
-                        motion = newMotionVector;
-                        System.out.println("new vec: " + motion);
-                        System.out.println("did all ricochet code");
-                    } else {
-                        discard();
+            } else if (hitResult.getType() == HitResult.Type.BLOCK) {
+                int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
+                if (impactParticleCount > 0) {
+                    BlockState blockstate = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
+                    BlockParticleOption particleOption = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
+                    Vec3 pos = hitResult.getLocation();
+                    for (int i = 0; i < impactParticleCount; ++i) {
+                        level.addParticle(
+                            particleOption,
+                            pos.x, pos.y, pos.z,
+                            random.nextGaussian() * 0.01,
+                            random.nextGaussian() * 0.01,
+                            random.nextGaussian() * 0.01
+                        );
                     }
                 }
+                if (OnSolidHit.shouldRicochet(hitResult, motion)) {
+                    System.out.println("old motion: " + motion);
+                    Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
+                    motion = newMotionVector;
+                    System.out.println("new vec: " + motion);
+                    System.out.println("did all ricochet code");
+                } else {
+                    discard();
+                }
             }
-
+        } else if(hitResult.getType() == HitResult.Type.ENTITY) {
+            if (!level.isClientSide) {
+                onHitEntity(entityHitResult);
+                discardOnNextTick();
+            }
+            discard();
         }
 
         if (wasTouchingWater) {
