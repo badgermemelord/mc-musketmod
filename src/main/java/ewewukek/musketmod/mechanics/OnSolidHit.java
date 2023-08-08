@@ -14,16 +14,31 @@ public class OnSolidHit {
         double noRicochetAngle = 40.0;
         double allRicochetAngle = 20.0;
         BlockHitResult blockHitResult = ((BlockHitResult) hitResult);
-        Direction faceNormal = blockHitResult.getDirection();
-        //System.out.println("facing: " + faceNormal + " vec3: " + projectilePath.toString());
-        double impactAngle = getTrajectoryToNormalAngle(projectilePath, getNormalFromFacing(faceNormal));
+        Vec3 faceNormalVec = getNormalFromFacing(blockHitResult.getDirection());
+        double impactAngle = getTrajectoryToNormalAngle(projectilePath, faceNormalVec);
         if (impactAngle < allRicochetAngle) {
-            projectileRicochet();
+            Vec3 newTrajectory = getRicochetVector(projectilePath, faceNormalVec);
+            projectileRicochet(hitResult);
         }
     }
 
-    public static void projectileRicochet() {
+    public static void projectileRicochet(HitResult hitResult) {
+    }
 
+    public static Vec3 getRicochetVector(Vec3 trajectory, Vec3 normal) {
+        double a0 = normal.x;
+        double b0 = normal.y;
+        double c0 = normal.z;
+
+        double a1 = - trajectory.x;
+        double b1 = - trajectory.y;
+        double c1 = - trajectory.z;
+
+        double a2 = a0*a1;
+        double b2 = b0*b1;
+        double c2 = c0*c1;
+
+        return new Vec3(a2, b2, c2);
     }
 
     public static Vec3 getNormalFromFacing(Direction facing) {
