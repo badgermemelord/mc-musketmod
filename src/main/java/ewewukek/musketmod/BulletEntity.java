@@ -154,8 +154,16 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
         if (hitResult.getType() != HitResult.Type.MISS) {
             if (!level.isClientSide) {
-                onHit(hitResult);
-                discardOnNextTick();
+                if (OnSolidHit.shouldRicochet(hitResult, motion)) {
+                    System.out.println("old motion: " + motion);
+                    Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
+                    motion = newMotionVector;
+                    System.out.println("new vec: " + motion);
+                    System.out.println("did all ricochet code");
+                } else {
+                    onHit(hitResult);
+                    discardOnNextTick();
+                }
 
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {
                 int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
@@ -173,8 +181,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
                         );
                     }
                 }
-                OnSolidHit.blockHit(hitResult, motion);
-
                 discard();
             }
         }
