@@ -36,9 +36,9 @@ public class OnSolidHit {
         double b1 = trajectory.y;
         double c1 = trajectory.z;
 
-        if (a) a1 = -a1;
-        if (b) b1 = -b1;
-        if (c) c1 = -c1;
+        if (a) a1 = -0.8*a1;
+        if (b) b1 = -0.8*b1;
+        if (c) c1 = -0.8*c1;
 
 
         return new Vec3(a1, b1, c1);
