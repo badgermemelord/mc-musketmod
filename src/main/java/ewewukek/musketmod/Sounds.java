@@ -15,6 +15,7 @@ public class Sounds {
     public static final SoundEvent MUSKET_READY = new SoundEvent(new ResourceLocation(MusketMod.MODID, "musket_ready"));
     public static final SoundEvent MUSKET_FIRE = new SoundEvent(new ResourceLocation(MusketMod.MODID, "musket_fire"));
     public static final SoundEvent PISTOL_FIRE = new SoundEvent(new ResourceLocation(MusketMod.MODID, "pistol_fire"));
+    public static final SoundEvent RICOCHET = new SoundEvent(new ResourceLocation(MusketMod.MODID, "ricochet"));
 
     public static void addSoundsToList() {
         soundList.add(0, MUSKET_LOAD_0);
@@ -23,5 +24,6 @@ public class Sounds {
         soundList.add(3, MUSKET_READY);
         soundList.add(4, MUSKET_FIRE);
         soundList.add(5, PISTOL_FIRE);
+        soundList.add(6, RICOCHET);
     }
 }

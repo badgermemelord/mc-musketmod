@@ -19,7 +19,7 @@ public class OnSolidHit {
         double impactAngle = getTrajectoryToNormalAngle(projectilePath, faceNormalVec);
 
         double randomRicochetValue = impactAngle*rand;
-        if (randomRicochetValue <= ricochetThreshold && projectilePath.length() > 3) {
+        if (randomRicochetValue <= ricochetThreshold && projectilePath.length() > 2) {
             return true;
         } else {
             return false;

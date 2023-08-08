@@ -8,3 +8,5 @@ musket_load[0,1,2].ogg
 pistol_fire.ogg
     based on (CC0) https://freesound.org/people/straget/sounds/410552/
     with bits from https://www.youtube.com/watch?v=LAjOnNufato
+ricochet.ogg
+    https://elements.envato.com/ricochet-3-KVJNA25?utm_source=mixkit&utm_medium=referral&utm_campaign=elements_mixkit_cs_sfx_search_no_results&_ga=2.252892809.1215323614.1691498746-665285605.1691498746

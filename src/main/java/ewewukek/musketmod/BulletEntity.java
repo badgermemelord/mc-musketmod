@@ -3,15 +3,21 @@ package ewewukek.musketmod;
 import java.util.Optional;
 
 import ewewukek.musketmod.mechanics.OnSolidHit;
+import ewewukek.musketmod.networking.ModPackets;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
@@ -152,6 +158,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
         }
 
+        //Upon hitting a block, decides whether to discard the bullet or ricochet.
+
         if (hitResult.getType() == HitResult.Type.BLOCK) {
             if (!level.isClientSide) {
                 if (OnSolidHit.shouldRicochet(hitResult, motion)) {
@@ -160,6 +168,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     motion = newMotionVector;
                     System.out.println("new vec: " + motion);
                     System.out.println("did all ricochet code");
+                    FriendlyByteBuf buf = PacketByteBufs.create();
+                    buf.writeInt(0);
+                    level.playLocalSound(hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, Sounds.RICOCHET, SoundSource.PLAYERS, 3f, 3f, true);
+
+                    ServerPlayNetworking.send((ServerPlayer) getOwner(), ModPackets.CLIENT_PLAY_MUSKET_SOUND, buf);
+                    ServerPlayNetworking.send(null, ModPackets.CLIENT_PLAY_MUSKET_SOUND, buf);
                 } else {
                     onHit(hitResult);
                     discardOnNextTick();
