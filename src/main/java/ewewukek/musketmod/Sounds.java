@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Sounds {
 
-    public static List<SoundEvent> soundList = new ArrayList<>(6);
+    public static List<SoundEvent> soundList = new ArrayList<>(7);
     public static final SoundEvent MUSKET_LOAD_0 = new SoundEvent(new ResourceLocation(MusketMod.MODID, "musket_load0"));
     public static final SoundEvent MUSKET_LOAD_1 = new SoundEvent(new ResourceLocation(MusketMod.MODID, "musket_load1"));
     public static final SoundEvent MUSKET_LOAD_2 = new SoundEvent(new ResourceLocation(MusketMod.MODID, "musket_load2"));

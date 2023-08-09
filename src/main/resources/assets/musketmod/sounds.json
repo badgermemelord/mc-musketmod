@@ -28,5 +28,10 @@
     "sounds": [
       "musketmod:pistol_fire"
     ]
+  },
+  "ricochet": {
+    "sounds": [
+      "musketmod:ricochet"
+    ]
   }
 }

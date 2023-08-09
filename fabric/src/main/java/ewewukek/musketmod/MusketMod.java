@@ -61,9 +61,9 @@ public class MusketMod implements ModInitializer {
         Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
         Registry.register(Registry.SOUND_EVENT, Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
         Registry.register(Registry.SOUND_EVENT, Sounds.RICOCHET.getLocation(), Sounds.RICOCHET);
+
         Sounds.addSoundsToList();
 
-        //ModPackets.registerS2CPackets();
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override

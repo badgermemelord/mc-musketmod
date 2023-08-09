@@ -82,7 +82,8 @@ public class MusketMod {
                 Sounds.MUSKET_LOAD_2.setRegistryName(Sounds.MUSKET_LOAD_2.getLocation()),
                 Sounds.MUSKET_READY.setRegistryName(Sounds.MUSKET_READY.getLocation()),
                 Sounds.MUSKET_FIRE.setRegistryName(Sounds.MUSKET_FIRE.getLocation()),
-                Sounds.PISTOL_FIRE.setRegistryName(Sounds.PISTOL_FIRE.getLocation())
+                Sounds.PISTOL_FIRE.setRegistryName(Sounds.PISTOL_FIRE.getLocation()),
+                Sounds.RICOCHET.setRegistryName(Sounds.RICOCHET.getLocation())
             );
         }
     }
