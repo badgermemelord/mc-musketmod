@@ -164,15 +164,22 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
         if (hitResult.getType() == HitResult.Type.BLOCK) {
             if (!level.isClientSide) {
+                FriendlyByteBuf buf = PacketByteBufs.create();
                 if (OnSolidHit.shouldRicochet(hitResult, motion)) {
                     System.out.println("old motion: " + motion);
                     Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
                     motion = newMotionVector;
                     System.out.println("new vec: " + motion);
                     System.out.println("did all ricochet code");
-                    FriendlyByteBuf buf = PacketByteBufs.create();
-                    buf.writeInt(6);
-                    //level.playLocalSound(hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, Sounds.RICOCHET, SoundSource.PLAYERS, 1f, 1f, true);
+
+                    buf.writeInt(this.getId());
+                    buf.writeBoolean(true);
+                    buf.writeBlockHitResult((BlockHitResult) hitResult);
+                    buf.writeDouble(motion.x);
+                    buf.writeDouble(motion.y);
+                    buf.writeDouble(motion.z);
+
+                    ServerPlayNetworking.send((ServerPlayer) getOwner(), ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
                     level.playSound(
                             null,
                             hitResult.getLocation().x,
@@ -183,20 +190,18 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             1.0F,
                             1.0F
                     );
-                    //ServerPlayNetworking.send((ServerPlayer) getOwner(), ModPackets.CLIENT_PLAY_MUSKET_SOUND, buf);
-                    //ServerPlayNetworking.send(null, ModPackets.CLIENT_PLAY_MUSKET_SOUND, buf);
                 } else {
                     onHit(hitResult);
                     discardOnNextTick();
                 }
 
-            } else {
+            }/* else {
                 if (OnSolidHit.shouldRicochet(hitResult, motion)) {
                     System.out.println("old motion: " + motion);
                     Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
                     motion = newMotionVector;
                     Player player = (Player) getOwner();
-/*                    level.playSound(
+*//*                    level.playSound(
                             player,
                             player.getX(),
                             player.getY(),
@@ -205,7 +210,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             SoundSource.PLAYERS,
                             10.0F,
                             10.0F
-                    );*/
+                    );*//*
                     System.out.println("new vec: " + motion);
                     System.out.println("did all ricochet code");
                 } else {
@@ -226,7 +231,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                         );
                     }
                 }
-            }
+            }*/
         } else if(hitResult.getType() == HitResult.Type.ENTITY) {
             if (!level.isClientSide) {
                 onHitEntity(entityHitResult);

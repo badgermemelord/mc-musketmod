@@ -1,5 +1,6 @@
 package ewewukek.musketmod;
 
+import ewewukek.musketmod.mechanics.ClientMethods;
 import ewewukek.musketmod.networking.ModPackets;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -13,7 +14,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.UUID;
 
 public class ClientSetup implements ClientModInitializer {
 
@@ -42,6 +46,25 @@ public class ClientSetup implements ClientModInitializer {
                 Entity entity = client.player;
                 SoundEvent sound = Sounds.soundList.get(soundIndex);
                 entity.playSound(sound, 0.8f, 1);
+            });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(ModPackets.CLIENT_BLOCKHIT_PACKET, (client, handler, buf, responseSender) -> {
+            int entityID = buf.readInt();
+            boolean shouldRicochet = buf.readBoolean();
+            BlockHitResult hitResult = buf.readBlockHitResult();
+            Level world = client.level;
+            double vectorX = buf.readDouble();
+            double vectorY = buf.readDouble();
+            double vectorZ = buf.readDouble();
+            Vec3 newTrajectory = new Vec3(vectorX, vectorY, vectorZ);
+            client.execute(() ->  {
+                System.out.println("received packet");
+                if (shouldRicochet) {
+                    ClientMethods.updateTrajectoryOnHit(entityID, world, newTrajectory);
+                } else {
+                    ClientMethods.blockHit(entityID, world, hitResult);
+                }
+
             });
         });
 
