@@ -58,7 +58,7 @@ public class ClientSetup implements ClientModInitializer {
             double vectorZ = buf.readDouble();
             Vec3 newTrajectory = new Vec3(vectorX, vectorY, vectorZ);
             client.execute(() ->  {
-                System.out.println("received packet");
+                //System.out.println("received packet");
                 if (shouldRicochet) {
                     ClientMethods.updateTrajectoryOnHit(entityID, world, newTrajectory);
                 } else {

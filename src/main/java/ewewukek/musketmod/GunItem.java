@@ -296,17 +296,6 @@ public abstract class GunItem extends Item {
         }
     }
 
-    // for Wastelands of Baedoor
-    public static void increaseGunExperience(Player player) {
-        final String NAME = "gun_experience";
-        Scoreboard board = player.getScoreboard();
-        Objective objective = board.getObjective(NAME);
-        if (objective == null) {
-            objective = board.addObjective(NAME, ObjectiveCriteria.DUMMY, new TextComponent(NAME), ObjectiveCriteria.RenderType.INTEGER);
-        }
-        Score score = board.getOrCreatePlayerScore(player.getScoreboardName(), objective);
-        score.increment();
-    }
 
     public static ItemStack getActiveStack(InteractionHand hand) {
         if (hand == InteractionHand.MAIN_HAND) {

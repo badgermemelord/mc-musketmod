@@ -10,7 +10,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Random;
-import java.util.UUID;
 
 public class ClientMethods {
 
@@ -21,7 +20,6 @@ public class ClientMethods {
     }
 
     public static void blockHit(int entityID, Level world, BlockHitResult hitResult) {
-        System.out.println("client block hit");
         BulletEntity projectile = (BulletEntity) world.getEntity(entityID);
         int impactParticleCount = (int)(projectile.getDeltaMovement().lengthSqr() / 20);
         if (impactParticleCount > 0) {

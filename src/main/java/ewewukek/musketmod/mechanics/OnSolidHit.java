@@ -64,8 +64,8 @@ public class OnSolidHit {
         double angle =  Math.acos(dotProduct/(trajectoryMagnitude*normalMagnitude));
         double angleDeg = angle*57.296;
 
-        System.out.println("l'angle est: " + angleDeg);
-        System.out.println("l'angle final est: " + (angleDeg-90.0));
+        //System.out.println("l'angle est: " + angleDeg);
+        //System.out.println("l'angle final est: " + (angleDeg-90.0));
         return angleDeg-90;
     }
 
