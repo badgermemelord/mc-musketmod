@@ -5,6 +5,7 @@ import java.util.Optional;
 import ewewukek.musketmod.mechanics.OnSolidHit;
 import ewewukek.musketmod.networking.ModPackets;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -78,6 +79,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             discard();
             return;
         }
+        System.out.println("is client: " + level.isClientSide);
 
         Vec3 motion = getDeltaMovement();
         Vec3 from = position();
@@ -163,7 +165,9 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
 
         if (hitResult.getType() == HitResult.Type.BLOCK) {
+            System.out.println("is client2: " + level.isClientSide);
             if (!level.isClientSide) {
+                System.out.println("server code for: " + this.getId());
                 FriendlyByteBuf buf = PacketByteBufs.create();
                 if (OnSolidHit.shouldRicochet(hitResult, motion)) {
                     System.out.println("old motion: " + motion);
@@ -179,7 +183,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     buf.writeDouble(motion.y);
                     buf.writeDouble(motion.z);
 
-                    ServerPlayNetworking.send((ServerPlayer) getOwner(), ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
+                    for (ServerPlayer player : PlayerLookup.tracking(this)) {
+                        System.out.println("sent packet to " + player.getScoreboardName());
+                        ServerPlayNetworking.send(player, ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
+                    }
+
                     level.playSound(
                             null,
                             hitResult.getLocation().x,
@@ -193,6 +201,18 @@ public class BulletEntity extends AbstractHurtingProjectile {
                 } else {
                     onHit(hitResult);
                     discardOnNextTick();
+
+                    buf.writeInt(this.getId());
+                    buf.writeBoolean(false);
+                    buf.writeBlockHitResult((BlockHitResult) hitResult);
+                    buf.writeDouble(motion.x);
+                    buf.writeDouble(motion.y);
+                    buf.writeDouble(motion.z);
+
+                    for (ServerPlayer player : PlayerLookup.tracking(this)) {
+                        System.out.println("sent packet to " + player.getScoreboardName());
+                        ServerPlayNetworking.send(player, ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
+                    }
                 }
 
             }/* else {
@@ -201,7 +221,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
                     motion = newMotionVector;
                     Player player = (Player) getOwner();
-*//*                    level.playSound(
+                    level.playSound(
                             player,
                             player.getX(),
                             player.getY(),
@@ -210,12 +230,13 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             SoundSource.PLAYERS,
                             10.0F,
                             10.0F
-                    );*//*
+                    );
                     System.out.println("new vec: " + motion);
                     System.out.println("did all ricochet code");
                 } else {
                     discard();
                 }
+                System.out.println("client code for: " + this.getId());
                 int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
                 if (impactParticleCount > 0) {
                     BlockState blockstate = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
@@ -231,6 +252,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                         );
                     }
                 }
+                this.setDeltaMovement(0.0,0.0,0.0);
             }*/
         } else if(hitResult.getType() == HitResult.Type.ENTITY) {
             if (!level.isClientSide) {

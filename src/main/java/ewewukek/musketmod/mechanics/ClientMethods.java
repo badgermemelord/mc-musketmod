@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Random;
 import java.util.UUID;
 
 public class ClientMethods {
@@ -20,19 +21,21 @@ public class ClientMethods {
     }
 
     public static void blockHit(int entityID, Level world, BlockHitResult hitResult) {
+        System.out.println("client block hit");
         BulletEntity projectile = (BulletEntity) world.getEntity(entityID);
         int impactParticleCount = (int)(projectile.getDeltaMovement().lengthSqr() / 20);
         if (impactParticleCount > 0) {
             BlockState blockstate = world.getBlockState(hitResult.getBlockPos());
             BlockParticleOption particleOption = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
             Vec3 pos = hitResult.getLocation();
+            Random random = new Random();
             for (int i = 0; i < impactParticleCount; ++i) {
                 world.addParticle(
                         particleOption,
                         pos.x, pos.y, pos.z,
-                        0.01,
-                        0.01,
-                        0.01
+                        random.nextGaussian() * 0.01,
+                        random.nextGaussian() * 0.01,
+                        random.nextGaussian() * 0.01
                 );
             }
         }
