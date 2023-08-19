@@ -14,9 +14,13 @@ import java.util.Random;
 public class ClientMethods {
 
     public static void updateTrajectoryOnHit(int entityID, Level world, Vec3 newTrajectory) {
-        //Entity projectile = world.getEntity(entityID);
         BulletEntity projectile = (BulletEntity) world.getEntity(entityID);
         projectile.setDeltaMovement(newTrajectory);
+    }
+
+    public static void updateEntityPos(int entityID, Level world, Vec3 newPos) {
+        BulletEntity projectile = (BulletEntity) world.getEntity(entityID);
+        projectile.setPos(newPos);
     }
 
     public static void blockHit(int entityID, Level world, BlockHitResult hitResult) {

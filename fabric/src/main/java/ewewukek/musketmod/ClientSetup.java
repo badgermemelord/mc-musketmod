@@ -56,17 +56,19 @@ public class ClientSetup implements ClientModInitializer {
             double vectorX = buf.readDouble();
             double vectorY = buf.readDouble();
             double vectorZ = buf.readDouble();
+            double posX = hitResult.getLocation().x;
+            double posY = hitResult.getLocation().y;
+            double posZ = hitResult.getLocation().z;
             Vec3 newTrajectory = new Vec3(vectorX, vectorY, vectorZ);
+            Vec3 newPos = new Vec3(posX, posY, posZ);
             client.execute(() ->  {
-                //System.out.println("received packet");
                 if (shouldRicochet) {
                     ClientMethods.updateTrajectoryOnHit(entityID, world, newTrajectory);
+                    ClientMethods.updateEntityPos(entityID, world, newPos);
                 } else {
                     ClientMethods.blockHit(entityID, world, hitResult);
                 }
-
             });
         });
-
     }
 }

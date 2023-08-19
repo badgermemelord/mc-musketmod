@@ -209,7 +209,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     buf.writeDouble(motion.y);
                     buf.writeDouble(motion.z);
 
-
                     for (ServerPlayer player : PlayerLookup.tracking(this)) {
                         ServerPlayNetworking.send(player, ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
                     }
