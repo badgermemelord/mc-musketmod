@@ -231,57 +231,59 @@ public abstract class GunItem extends Item {
         Random random = shooter.getRandom();
         Level level = shooter.level;
         b = 0;
+        if (!level.isClientSide) {
 
-        //Durability debuffs
-        int remainingDurability = durability() - stack.getDamageValue();
-        float effectivenessCoefficient = 1;
-        float stdDevDebuff = 1;
-        if (remainingDurability <= 10) {
-            effectivenessCoefficient = 0.7f;
-            stdDevDebuff = 2;
-        }
-
-
-        Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
-
-        for (int a = 0; a < pelletCount(); a++) {
-            float angle = (float) Math.PI * 2 * random.nextFloat();
-            float gaussian = Math.abs((float) random.nextGaussian());
-            if (gaussian > 4) gaussian = 4;
-
-            float spread = stdDevDebuff * bulletStdDev() * gaussian;
-
-            // a plane perpendicular to direction
-            Vec3 n1;
-            Vec3 n2;
-            if (Math.abs(direction.x) < 1e-5 && Math.abs(direction.z) < 1e-5) {
-                n1 = new Vec3(1, 0, 0);
-                n2 = new Vec3(0, 0, 1);
-            } else {
-                n1 = new Vec3(-direction.z, 0, direction.x).normalize();
-                n2 = direction.cross(n1);
+            //Durability debuffs
+            int remainingDurability = durability() - stack.getDamageValue();
+            float effectivenessCoefficient = 1;
+            float stdDevDebuff = 1;
+            if (remainingDurability <= 10) {
+                effectivenessCoefficient = 0.7f;
+                stdDevDebuff = 2;
             }
 
-            Vec3 motion = direction.scale(Mth.cos(spread))
-                    .add(n1.scale(Mth.sin(spread) * Mth.sin(angle))) // signs are not important for random angle
-                    .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
-                    .scale(bulletSpeed());
 
-            //Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
+            Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
 
-            BulletEntity bullet = new BulletEntity(level);
-            bullet.setOwner(shooter);
-            bullet.setPos(origin);
-            bullet.setInitialSpeed(effectivenessCoefficient * bulletSpeed());
-            bullet.setDeltaMovement(motion);
-            float t = random.nextFloat();
-            bullet.damageMultiplier = effectivenessCoefficient * (t * damageMultiplierMin() + (1 - t) * damageMultiplierMax());
-            bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
+            for (int a = 0; a < pelletCount(); a++) {
+                float angle = (float) Math.PI * 2 * random.nextFloat();
+                float gaussian = Math.abs((float) random.nextGaussian());
+                if (gaussian > 4) gaussian = 4;
 
-            level.addFreshEntity(bullet);
+                float spread = stdDevDebuff * bulletStdDev() * gaussian;
+
+                // a plane perpendicular to direction
+                Vec3 n1;
+                Vec3 n2;
+                if (Math.abs(direction.x) < 1e-5 && Math.abs(direction.z) < 1e-5) {
+                    n1 = new Vec3(1, 0, 0);
+                    n2 = new Vec3(0, 0, 1);
+                } else {
+                    n1 = new Vec3(-direction.z, 0, direction.x).normalize();
+                    n2 = direction.cross(n1);
+                }
+
+                Vec3 motion = direction.scale(Mth.cos(spread))
+                        .add(n1.scale(Mth.sin(spread) * Mth.sin(angle))) // signs are not important for random angle
+                        .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
+                        .scale(bulletSpeed());
+
+                //Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
+
+                BulletEntity bullet = new BulletEntity(level);
+                bullet.setOwner(shooter);
+                bullet.setPos(origin);
+                bullet.setInitialSpeed(effectivenessCoefficient * bulletSpeed());
+                bullet.setDeltaMovement(motion);
+                float t = random.nextFloat();
+                bullet.damageMultiplier = effectivenessCoefficient * (t * damageMultiplierMin() + (1 - t) * damageMultiplierMax());
+                bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
+
+                level.addFreshEntity(bullet);
+            }
+
+            MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);
         }
-
-        MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);
     }
 
     public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {

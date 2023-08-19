@@ -209,50 +209,15 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     buf.writeDouble(motion.y);
                     buf.writeDouble(motion.z);
 
+
                     for (ServerPlayer player : PlayerLookup.tracking(this)) {
                         ServerPlayNetworking.send(player, ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
                     }
                 }
 
-            }/* else {
-                if (OnSolidHit.shouldRicochet(hitResult, motion)) {
-                    System.out.println("old motion: " + motion);
-                    Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
-                    motion = newMotionVector;
-                    Player player = (Player) getOwner();
-                    level.playSound(
-                            player,
-                            player.getX(),
-                            player.getY(),
-                            player.getZ(),
-                            Sounds.RICOCHET,
-                            SoundSource.PLAYERS,
-                            10.0F,
-                            10.0F
-                    );
-                    System.out.println("new vec: " + motion);
-                    System.out.println("did all ricochet code");
-                } else {
-                    discard();
-                }
-                System.out.println("client code for: " + this.getId());
-                int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
-                if (impactParticleCount > 0) {
-                    BlockState blockstate = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
-                    BlockParticleOption particleOption = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-                    Vec3 pos = hitResult.getLocation();
-                    for (int i = 0; i < impactParticleCount; ++i) {
-                        level.addParticle(
-                            particleOption,
-                            pos.x, pos.y, pos.z,
-                            random.nextGaussian() * 0.01,
-                            random.nextGaussian() * 0.01,
-                            random.nextGaussian() * 0.01
-                        );
-                    }
-                }
-                this.setDeltaMovement(0.0,0.0,0.0);
-            }*/
+            } else {
+                //this.setDeltaMovement(0.0,0.0,0.0);
+            }
         } else if(hitResult.getType() == HitResult.Type.ENTITY) {
             if (!level.isClientSide) {
                 onHitEntity(entityHitResult);
