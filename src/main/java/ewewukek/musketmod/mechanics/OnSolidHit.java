@@ -9,8 +9,11 @@ import java.util.Random;
 
 public class OnSolidHit {
 
+    public static double ricochetAngleThreshold = 40.0;
+    public static double ricochetVelocityThreshold = 5.0;
+
     public static boolean shouldRicochet(HitResult hitResult, Vec3 projectilePath) {
-        double ricochetThreshold = 40.0;
+        //double ricochetThreshold = 40.0;
         Random random = new Random();
         double rand = random.nextDouble()+1;
 
@@ -19,7 +22,7 @@ public class OnSolidHit {
         double impactAngle = getTrajectoryToNormalAngle(projectilePath, faceNormalVec);
 
         double randomRicochetValue = impactAngle*rand;
-        if (randomRicochetValue <= ricochetThreshold && projectilePath.length() > 2) {
+        if (randomRicochetValue <= ricochetAngleThreshold && projectilePath.length() > ricochetVelocityThreshold) {
             return true;
         } else {
             return false;

@@ -8,16 +8,20 @@ import java.nio.file.NoSuchFileException;
 import java.util.Locale;
 import java.util.Scanner;
 
+import ewewukek.musketmod.mechanics.OnSolidHit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Config {
     private static final Logger logger = LogManager.getLogger(MusketMod.class);
     public static final Config INSTANCE = new Config();
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     //General values
     public double bulletMaxDistance;
+    public double lifetime;
+    public double ricochetAngleThreshold;
+    public double ricochetVelocityThreshold;
     //Musket values
     public double musketBulletStdDev;
     public double musketBulletSpeed;
@@ -55,6 +59,9 @@ public class Config {
         INSTANCE.load();
 
         BulletEntity.maxDistance = INSTANCE.bulletMaxDistance;
+        BulletEntity.lifetime = (short) INSTANCE.lifetime;
+        OnSolidHit.ricochetAngleThreshold = INSTANCE.ricochetAngleThreshold;
+        OnSolidHit.ricochetVelocityThreshold = INSTANCE.ricochetVelocityThreshold;
 
         MusketItem.bulletStdDev = (float)Math.toRadians(INSTANCE.musketBulletStdDev);
         MusketItem.bulletSpeed = (float)(INSTANCE.musketBulletSpeed / 20);
@@ -98,6 +105,9 @@ public class Config {
     private void setDefaults() {
         //General values
         bulletMaxDistance = 384;
+        lifetime = 200;
+        ricochetAngleThreshold = 40.0;
+        ricochetVelocityThreshold = 5.0;
         //Musket values
         musketBulletStdDev = 1;
         musketBulletSpeed = 220;
@@ -167,6 +177,15 @@ public class Config {
                     //general values
                     case "bulletMaxDistance":
                         bulletMaxDistance = value;
+                        break;
+                    case "lifetime":
+                        lifetime = value;
+                        break;
+                    case "ricochetAngleThreshold":
+                        ricochetAngleThreshold = value;
+                        break;
+                    case "ricochetVelocityThreshold":
+                        ricochetVelocityThreshold = value;
                         break;
                     //musket values
                     case "musketBulletStdDev":
@@ -272,8 +291,16 @@ public class Config {
         try (BufferedWriter writer = Files.newBufferedWriter(MusketMod.CONFIG_PATH)) {
             writer.write("version = "+VERSION+"\n");
             writer.write("\n");
+            writer.write("# General values\n");
+            writer.write("\n");
             writer.write("# Maximum bullet travel distance (in blocks)\n");
             writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
+            writer.write("# Maximum bullet entity lifetime  (in ticks)\n");
+            writer.write("lifetime = "+lifetime+"\n");
+            writer.write("# Maximum Angle at which bullets can ricochet\n");
+            writer.write("ricochetAngleThreshold = "+ricochetAngleThreshold+"\n");
+            writer.write("# Minimum velocity required for a bullet to ricochet (in m/tick)\n");
+            writer.write("ricochetVelocityThreshold = "+ricochetVelocityThreshold+"\n");
             writer.write("\n");
             writer.write("# Musket\n");
             writer.write("\n");

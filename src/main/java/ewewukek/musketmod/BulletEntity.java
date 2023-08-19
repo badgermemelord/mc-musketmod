@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,7 +17,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -29,7 +27,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -44,7 +41,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final double GRAVITY = 0.05;
     public static final double AIR_FRICTION = 0.99;
     public static final double WATER_FRICTION = 0.6;
-    public static final short LIFETIME = 200;
+    public static short lifetime = 200;
 
     public static double maxDistance;
 
@@ -70,16 +67,15 @@ public class BulletEntity extends AbstractHurtingProjectile {
     }
 
     public void discardOnNextTick() {
-        tickCounter = LIFETIME;
+        tickCounter = lifetime;
     }
 
     @Override
     public void tick() {
-        if (++tickCounter >= LIFETIME || distanceTravelled > maxDistance) {
+        if (++tickCounter >= lifetime || distanceTravelled > maxDistance) {
             discard();
             return;
         }
-        System.out.println("is client: " + level.isClientSide);
 
         Vec3 motion = getDeltaMovement();
         Vec3 from = position();
@@ -165,16 +161,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
 
         if (hitResult.getType() == HitResult.Type.BLOCK) {
-            System.out.println("is client2: " + level.isClientSide);
             if (!level.isClientSide) {
-                System.out.println("server code for: " + this.getId());
                 FriendlyByteBuf buf = PacketByteBufs.create();
                 if (OnSolidHit.shouldRicochet(hitResult, motion)) {
-                    System.out.println("old motion: " + motion);
-                    Vec3 newMotionVector = OnSolidHit.getRicochetVector(motion, hitResult);
-                    motion = newMotionVector;
-                    System.out.println("new vec: " + motion);
-                    System.out.println("did all ricochet code");
+                    motion = OnSolidHit.getRicochetVector(motion, hitResult);
 
                     buf.writeInt(this.getId());
                     buf.writeBoolean(true);
@@ -184,7 +174,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     buf.writeDouble(motion.z);
 
                     for (ServerPlayer player : PlayerLookup.tracking(this)) {
-                        System.out.println("sent packet to " + player.getScoreboardName());
+                        //System.out.println("sent packet to " + player.getScoreboardName());
                         ServerPlayNetworking.send(player, ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
                     }
 
@@ -213,9 +203,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
                         ServerPlayNetworking.send(player, ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
                     }
                 }
-
-            } else {
-                //this.setDeltaMovement(0.0,0.0,0.0);
             }
         } else if(hitResult.getType() == HitResult.Type.ENTITY) {
             if (!level.isClientSide) {
