@@ -1,0 +1,12 @@
+{
+	"parent": "block/block",
+	"ambientocclusion": false,
+	"textures": {
+		"axis": "block/birch_log_top",
+		"axis_top": "block/spruce_log_top",
+		"plates": "block/spruce_log_top",
+		"insert": "block/spruce_log_top",
+		"spruce_log_top": "block/spruce_log_top",
+		"particle": "block/spruce_log_top"
+	}
+}
