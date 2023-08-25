@@ -163,7 +163,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         if (hitResult.getType() == HitResult.Type.BLOCK) {
             if (!level.isClientSide) {
                 FriendlyByteBuf buf = PacketByteBufs.create();
-                if (OnSolidHit.shouldRicochet(hitResult, motion)) {
+                if (OnSolidHit.shouldRicochet(hitResult, motion, level, this)) {
                     motion = OnSolidHit.getRicochetVector(motion, hitResult);
 
                     buf.writeInt(this.getId());
