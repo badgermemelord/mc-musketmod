@@ -49,25 +49,29 @@ public class ClientSetup implements ClientModInitializer {
             });
         });
         ClientPlayNetworking.registerGlobalReceiver(ModPackets.CLIENT_BLOCKHIT_PACKET, (client, handler, buf, responseSender) -> {
+            Level world = client.level;
+
             int entityID = buf.readInt();
             boolean shouldRicochet = buf.readBoolean();
-            BlockHitResult hitResult = buf.readBlockHitResult();
-            Level world = client.level;
+            //BlockHitResult hitResult = buf.readBlockHitResult();
             double vectorX = buf.readDouble();
             double vectorY = buf.readDouble();
             double vectorZ = buf.readDouble();
-            double posX = hitResult.getLocation().x;
-            double posY = hitResult.getLocation().y;
-            double posZ = hitResult.getLocation().z;
-            Vec3 newTrajectory = new Vec3(vectorX, vectorY, vectorZ);
+            double posX = buf.readDouble();
+            double posY = buf.readDouble();
+            double posZ = buf.readDouble();
+
+            //Vec3 newPos = hitResult.getLocation();
             Vec3 newPos = new Vec3(posX, posY, posZ);
+            Vec3 newTrajectory = new Vec3(vectorX, vectorY, vectorZ);
             client.execute(() ->  {
                 if (shouldRicochet) {
                     System.out.println("newposclient is: " + newPos);
                     ClientMethods.updateTrajectoryOnHit(entityID, world, newTrajectory);
                     ClientMethods.updateEntityPos(entityID, world, newPos);
                 } else {
-                    ClientMethods.blockHit(entityID, world, hitResult);
+                    //System.out.println("newposclient is: " + hitResult.getLocation());
+                    //ClientMethods.blockHit(entityID, world, hitResult);
                 }
             });
         });

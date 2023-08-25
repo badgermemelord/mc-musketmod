@@ -162,17 +162,20 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
         if (hitResult.getType() == HitResult.Type.BLOCK) {
             if (!level.isClientSide) {
-                System.out.println("anewpos is: " + hitResult.getLocation());
+                System.out.println("server newpos is: " + hitResult.getLocation());
                 FriendlyByteBuf buf = PacketByteBufs.create();
                 if (OnSolidHit.shouldRicochet(hitResult, motion, level, this)) {
                     motion = OnSolidHit.getRicochetVector(motion, hitResult);
 
                     buf.writeInt(this.getId());
                     buf.writeBoolean(true);
-                    buf.writeBlockHitResult((BlockHitResult) hitResult);
+                    //buf.writeBlockHitResult((BlockHitResult) hitResult);
                     buf.writeDouble(motion.x);
                     buf.writeDouble(motion.y);
                     buf.writeDouble(motion.z);
+                    buf.writeDouble(hitResult.getLocation().x);
+                    buf.writeDouble(hitResult.getLocation().y);
+                    buf.writeDouble(hitResult.getLocation().z);
 
                     for (ServerPlayer player : PlayerLookup.tracking(this)) {
                         //System.out.println("sent packet to " + player.getScoreboardName());
@@ -195,10 +198,13 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
                     buf.writeInt(this.getId());
                     buf.writeBoolean(false);
-                    buf.writeBlockHitResult((BlockHitResult) hitResult);
+                    //buf.writeBlockHitResult((BlockHitResult) hitResult);
                     buf.writeDouble(motion.x);
                     buf.writeDouble(motion.y);
                     buf.writeDouble(motion.z);
+                    buf.writeDouble(hitResult.getLocation().x);
+                    buf.writeDouble(hitResult.getLocation().y);
+                    buf.writeDouble(hitResult.getLocation().z);
 
                     for (ServerPlayer player : PlayerLookup.tracking(this)) {
                         ServerPlayNetworking.send(player, ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
