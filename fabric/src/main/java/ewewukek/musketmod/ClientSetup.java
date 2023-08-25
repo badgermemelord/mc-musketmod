@@ -63,6 +63,7 @@ public class ClientSetup implements ClientModInitializer {
             Vec3 newPos = new Vec3(posX, posY, posZ);
             client.execute(() ->  {
                 if (shouldRicochet) {
+                    System.out.println("newposclient is: " + newPos);
                     ClientMethods.updateTrajectoryOnHit(entityID, world, newTrajectory);
                     ClientMethods.updateEntityPos(entityID, world, newPos);
                 } else {

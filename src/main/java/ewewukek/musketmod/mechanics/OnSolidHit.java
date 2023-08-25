@@ -23,7 +23,7 @@ public class OnSolidHit {
         BlockHitResult blockHitResult = ((BlockHitResult) hitResult);
         //Vec3 faceNormalVec = getNormalFromFacing(blockHitResult.getDirection());
         Vec3 faceNormalVec = getNormalPhysicsBased(hitResult, projectilePath, level, entity);
-        double impactAngle = getTrajectoryToNormalAngle(projectilePath, faceNormalVec);
+        double impactAngle = 90 - getTrajectoryToNormalAngle(projectilePath, faceNormalVec);
 
         double randomRicochetValue = impactAngle*rand;
         if (randomRicochetValue <= ricochetAngleThreshold && projectilePath.length() > ricochetVelocityThreshold) {
@@ -66,14 +66,46 @@ public class OnSolidHit {
 
     public static Vec3 getNormalPhysicsBased(HitResult hitResult, Vec3 projectilePath, Level level, Entity entity) {
         Vec3 hitLocation = hitResult.getLocation();
+        Vec3 normalisedPath = projectilePath.normalize();
+        System.out.println("normalpath: " +  normalisedPath);
+        Vec3 invertedPath = new Vec3(1,1,1).subtract(normalisedPath).scale(0.0001);
+        System.out.println("invpath: " + invertedPath);
+
         Vec3 offsetVector = projectilePath.multiply(-0.1, -0.1, -0.1);
         Vec3 centreOffset = hitLocation.add(offsetVector);
+        System.out.println("posOffset: " + centreOffset);
         //Approach 1:
-        //Vec3 ray1StartPos = centreOffset.
-        //Approach 2:
+
+        Vec3 ray1StartPos = centreOffset.add(invertedPath.x, invertedPath.y, 0);
+        System.out.println("start1: " + ray1StartPos);
+        Vec3 ray2StartPos = centreOffset.add(0, invertedPath.y, invertedPath.z);
+        System.out.println("start2: " + ray2StartPos);
+        Vec3 ray3StartPos = centreOffset.add(invertedPath.x, invertedPath.y, invertedPath.z);
+        System.out.println("start3: " + ray3StartPos);
+
+        System.out.println("projectilePath: " + projectilePath);
+        System.out.println("offset1: " + ray1StartPos);
+        System.out.println("pos0: " + hitLocation);
+
+        Vec3 ray1Clip = rayCastHitPos(level, ray1StartPos, projectilePath.add(ray1StartPos), entity);
+        System.out.println("pos1: " + ray1Clip);
+        Vec3 ray2Clip = rayCastHitPos(level, ray2StartPos, projectilePath.add(ray2StartPos), entity);
+        System.out.println("pos2: " + ray2Clip);
+        Vec3 ray3Clip = rayCastHitPos(level, ray3StartPos, projectilePath.add(ray3StartPos), entity);
+        System.out.println("pos3: " + ray3Clip);
+
+        /*//Approach 2:
+        //Vec3 ray1Vector = new Vec3(-1,0,0);
         Vec3 ray1Vector = projectilePath.add(0.001, 0.001, 0);
         Vec3 ray2Vector = projectilePath.add(-0.001, 0.001, 0);
         Vec3 ray3Vector = projectilePath.add(0, -0.001, 0);
+
+*//*    Vec3 ray1Vector = projectilePath.multiply(1.1, 0.9, 1);
+        Vec3 ray2Vector = projectilePath.multiply(0.9, 1, 1.1);
+        Vec3 ray3Vector = projectilePath.multiply(1, 1.1, 0.9);*//*
+
+        System.out.println("projectilePath: " + projectilePath);
+        System.out.println("vec1: " + ray1Vector);
 
         System.out.println("pos0: " + hitLocation);
 
@@ -82,7 +114,7 @@ public class OnSolidHit {
         Vec3 ray2Clip = rayCastHitPos(level, centreOffset, ray2Vector, entity);
         System.out.println("pos2: " + ray2Clip);
         Vec3 ray3Clip = rayCastHitPos(level, centreOffset, ray3Vector, entity);
-        System.out.println("pos3: " + ray3Clip);
+        System.out.println("pos3: " + ray3Clip);*/
 
         Vec3 normal = constructPlaneFromPoints(ray1Clip, ray2Clip, ray3Clip);
         return normal;
@@ -116,8 +148,8 @@ public class OnSolidHit {
         //System.out.println("l'angle final est: " + (angleDeg-90.0));
         if (usingPhys) {
             if(angleDeg > 90) {
-                System.out.println("l'angle est: " + (angleDeg-90));
-                return angleDeg-90;
+                System.out.println("l'angle est: " + (180-angleDeg));
+                return 180-angleDeg;
             }
             else {
                 System.out.println("l'angle est: " + angleDeg);
