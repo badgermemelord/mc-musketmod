@@ -9,6 +9,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import java.lang.Math;
+import java.math.MathContext;
 import java.util.Random;
 
 public class OnSolidHit {
@@ -95,23 +96,26 @@ public class OnSolidHit {
         //double impactAngle = 90 - getTrajectoryToNormalAngle(projectilePath, normal);
         double remainingVelocity = Math.cos(impactAngle*(Math.PI/180));
 
-        double newNormalX = oldNormal.x;
-        double newNormalY = oldNormal.y;
-        double newNormalZ = oldNormal.z;
+        double normalX = oldNormal.x;
+        double normalY = oldNormal.y;
+        double normalZ = oldNormal.z;
 
         if (isNormalInverted) {
-            newNormalX = newNormalX*-100000000;
-            newNormalY = newNormalY*-100000000;
-            newNormalZ = newNormalZ*-100000000;
+            normalX = normalX*-1;
+            normalY = normalY*-1;
+            normalZ = normalZ*-1;
         }
-        else {
-            newNormalX = newNormalX*100000000;
-            newNormalY = newNormalY*100000000;
-            newNormalZ = newNormalZ*100000000;
-        }
+        System.out.println("normal inverted vec: " + new Vec3(normalX, normalY, normalZ));
 
-        Vec3 normale = new Vec3(newNormalX, newNormalY, newNormalZ);
-        Vec3 normal = normale.normalize();
+        //Normalise the normal
+        //double sum = normalX+normalY+normalZ;
+        double sum = Math.abs(normalX)+Math.abs(normalY)+Math.abs(normalZ);
+        double newNormalX = normalX/sum;
+        double newNormalY = normalY/sum;
+        double newNormalZ = normalZ/sum;
+
+        Vec3 normal = new Vec3(newNormalX, newNormalY, newNormalZ);
+
         //Vec3 normal = new Vec3(0, 0, 1);
         System.out.println("new normal: " + normal);
 
@@ -121,15 +125,17 @@ public class OnSolidHit {
         double inY = projectilePath.y;
         double inZ = projectilePath.z;
 
-        double normalX = normal.x;
+/*        double normalX = normal.x;
         double normalY = normal.y;
-        double normalZ = normal.z;
+        double normalZ = normal.z;*/
 
         double dot = projectilePath.dot(normal);
 
-        double outX = (inX - 2*normalX*dot)*remainingVelocity;
-        double outY = (inY - 2*normalY*dot)*remainingVelocity;
-        double outZ = (inZ - 2*normalZ*dot*remainingVelocity);
+        double outX = (inX - 2*newNormalX*dot)*remainingVelocity;
+        double outY = (inY - 2*newNormalY*dot)*remainingVelocity;
+        double outZ = (inZ - 2*newNormalZ*dot)*remainingVelocity;
+
+        System.out.println("out vec: " + new Vec3(outX, outY, outZ));
 
         return new Vec3(outX, outY, outZ);
 
@@ -143,7 +149,7 @@ public class OnSolidHit {
         Vec3 hitLocation = hitResult.getLocation();
         Vec3 normalisedPath = projectilePath.normalize();
         System.out.println("normalpath: " +  normalisedPath);
-        Vec3 invertedPath = new Vec3(1,1,1).subtract(normalisedPath).scale(0.0001);
+        Vec3 invertedPath = new Vec3(1,1,1).subtract(normalisedPath).scale(0.001);
         System.out.println("invpath: " + invertedPath);
 
         Vec3 offsetVector = projectilePath.multiply(-0.1, -0.1, -0.1);

@@ -67,6 +67,7 @@ public class ClientSetup implements ClientModInitializer {
             client.execute(() ->  {
                 if (shouldRicochet) {
                     System.out.println("newposclient is: " + newPos);
+                    System.out.println("new trajectory client is: " + newTrajectory);
                     ClientMethods.updateTrajectoryOnHit(entityID, world, newTrajectory);
                     //ClientMethods.updateEntityPos(entityID, world, newPos.add(newTrajectory.multiply(0.001, 0.001, 0.001)));
                     ClientMethods.updateEntityPos(entityID, world, newPos);
