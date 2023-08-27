@@ -157,22 +157,22 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
         }
 
-        //Upon hitting a block, decides whether to discard the bullet or ricochet.
-
+        // - - Impact angle related code - -
 
         if (hitResult.getType() == HitResult.Type.BLOCK) {
             if (!level.isClientSide) {
                 System.out.println("server newpos is: " + hitResult.getLocation());
                 FriendlyByteBuf buf = PacketByteBufs.create();
-                if (OnSolidHit.shouldRicochet(hitResult, motion, level, this)) {
-                    motion = OnSolidHit.getRicochetVectorAxisAligned(motion, hitResult);
-
+                Vec3 ricochetVector = OnSolidHit.evaluateAndPerformRicochet(hitResult, motion, level, this);
+                if (ricochetVector != null) {
+                    //motion = OnSolidHit.getRicochetVectorAxisAligned(motion, hitResult);
+                    System.out.println("ricochetVector: " + ricochetVector);
                     buf.writeInt(this.getId());
                     buf.writeBoolean(true);
                     //buf.writeBlockHitResult((BlockHitResult) hitResult);
-                    buf.writeDouble(motion.x);
-                    buf.writeDouble(motion.y);
-                    buf.writeDouble(motion.z);
+                    buf.writeDouble(ricochetVector.x);
+                    buf.writeDouble(ricochetVector.y);
+                    buf.writeDouble(ricochetVector.z);
                     buf.writeDouble(hitResult.getLocation().x);
                     buf.writeDouble(hitResult.getLocation().y);
                     buf.writeDouble(hitResult.getLocation().z);

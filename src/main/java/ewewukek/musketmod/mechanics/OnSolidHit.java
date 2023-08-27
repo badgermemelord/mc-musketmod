@@ -1,5 +1,6 @@
 package ewewukek.musketmod.mechanics;
 
+import com.mojang.math.Vector3d;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
@@ -33,6 +34,20 @@ public class OnSolidHit {
         }
     }
 
+    public static Vec3 evaluateAndPerformRicochet(HitResult hitResult, Vec3 projectilePath, Level level, Entity entity) {
+        Random random = new Random();
+        double rand = random.nextDouble()+1;
+        Vec3 normalVec = getNormalPhysicsBased(hitResult, projectilePath, level, entity);
+        double impactAngle = 90 - getTrajectoryToNormalAngle(projectilePath, normalVec);
+
+        double randomRicochetValue = impactAngle*rand;
+        if (randomRicochetValue <= ricochetAngleThreshold && projectilePath.length() > ricochetVelocityThreshold) {
+            return(getRicochetVectorPhys(projectilePath, normalVec, level, entity));
+        } else {
+            return null;
+        }
+    }
+
 
     public static Vec3 getRicochetVectorAxisAligned(Vec3 trajectory, HitResult hitResult) {
         BlockHitResult blockHitResult = ((BlockHitResult) hitResult);
@@ -60,14 +75,27 @@ public class OnSolidHit {
         return new Vec3(a1, b1, c1);
     }
 
-    public static Vec3 getRicochetVectorAxisAligned(Vec3 trajectory, HitResult hitResult) {
-        BlockHitResult blockHitResult = ((BlockHitResult) hitResult);
-        Vec3 normal = getNormalPhysicsBased(blockHitResult.getDirection());
-        double impactAngle = 90 - getTrajectoryToNormalAngle(trajectory, normal);
+    public static Vec3 getRicochetVectorPhys(Vec3 projectilePath, Vec3 normal, Level level, Entity entity) {
+        double impactAngle = 90 - getTrajectoryToNormalAngle(projectilePath, normal);
         double remainingVelocity = Math.cos(impactAngle*(Math.PI/180));
 
-        double inX = trajectory.x
+        //normal.normalize();
 
+        double inX = projectilePath.x;
+        double inY = projectilePath.y;
+        double inZ = projectilePath.z;
+
+        double normalX = normal.x;
+        double normalY = normal.y;
+        double normalZ = normal.z;
+
+        double dot = projectilePath.dot(normal);
+
+        double outX = (inX - 2*normalX*dot);
+        double outY = (inY - 2*normalY*dot);
+        double outZ = (inZ - 2*normalZ*dot);
+
+        return new Vec3(outX, outY, outZ);
 
     }
 
