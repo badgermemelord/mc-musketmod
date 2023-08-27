@@ -193,6 +193,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             1.0F
                     );
                 } else {
+                    System.out.println("discarded");
                     onHit(hitResult);
                     discardOnNextTick();
 

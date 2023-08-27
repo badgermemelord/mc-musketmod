@@ -38,11 +38,27 @@ public class OnSolidHit {
         Random random = new Random();
         double rand = random.nextDouble()+1;
         Vec3 normalVec = getNormalPhysicsBased(hitResult, projectilePath, level, entity);
-        double impactAngle = 90 - getTrajectoryToNormalAngle(projectilePath, normalVec);
+        double impactAngleRaw = getTrajectoryToNormalAngle(projectilePath, normalVec);
+        boolean isNormalInverted = false;
+
+        if(impactAngleRaw > 90) {
+            System.out.println("not inverted");
+            isNormalInverted = false;
+            impactAngleRaw = 180-impactAngleRaw;
+        }
+        else{
+            System.out.println("inverted");
+            isNormalInverted = true;
+            impactAngleRaw = impactAngleRaw;
+        }
+
+        double impactAngle = 90 - impactAngleRaw;
+        System.out.println("impact angle: " + impactAngle);
+
 
         double randomRicochetValue = impactAngle*rand;
         if (randomRicochetValue <= ricochetAngleThreshold && projectilePath.length() > ricochetVelocityThreshold) {
-            return(getRicochetVectorPhys(projectilePath, normalVec, level, entity));
+            return(getRicochetVectorPhys(projectilePath, normalVec, isNormalInverted, impactAngle, level, entity));
         } else {
             return null;
         }
@@ -75,9 +91,29 @@ public class OnSolidHit {
         return new Vec3(a1, b1, c1);
     }
 
-    public static Vec3 getRicochetVectorPhys(Vec3 projectilePath, Vec3 normal, Level level, Entity entity) {
-        double impactAngle = 90 - getTrajectoryToNormalAngle(projectilePath, normal);
+    public static Vec3 getRicochetVectorPhys(Vec3 projectilePath, Vec3 oldNormal, boolean isNormalInverted, double impactAngle, Level level, Entity entity) {
+        //double impactAngle = 90 - getTrajectoryToNormalAngle(projectilePath, normal);
         double remainingVelocity = Math.cos(impactAngle*(Math.PI/180));
+
+        double newNormalX = oldNormal.x;
+        double newNormalY = oldNormal.y;
+        double newNormalZ = oldNormal.z;
+
+        if (isNormalInverted) {
+            newNormalX = newNormalX*-100000000;
+            newNormalY = newNormalY*-100000000;
+            newNormalZ = newNormalZ*-100000000;
+        }
+        else {
+            newNormalX = newNormalX*100000000;
+            newNormalY = newNormalY*100000000;
+            newNormalZ = newNormalZ*100000000;
+        }
+
+        Vec3 normale = new Vec3(newNormalX, newNormalY, newNormalZ);
+        Vec3 normal = normale.normalize();
+        //Vec3 normal = new Vec3(0, 0, 1);
+        System.out.println("new normal: " + normal);
 
         //normal.normalize();
 
@@ -91,9 +127,9 @@ public class OnSolidHit {
 
         double dot = projectilePath.dot(normal);
 
-        double outX = (inX - 2*normalX*dot);
-        double outY = (inY - 2*normalY*dot);
-        double outZ = (inZ - 2*normalZ*dot);
+        double outX = (inX - 2*normalX*dot)*remainingVelocity;
+        double outY = (inY - 2*normalY*dot)*remainingVelocity;
+        double outZ = (inZ - 2*normalZ*dot*remainingVelocity);
 
         return new Vec3(outX, outY, outZ);
 
@@ -186,14 +222,15 @@ public class OnSolidHit {
         //System.out.println("l'angle est: " + angleDeg);
         //System.out.println("l'angle final est: " + (angleDeg-90.0));
         if (usingPhys) {
-            if(angleDeg > 90) {
+/*            if(angleDeg > 90) {
                 System.out.println("l'angle est-a: " + (180-angleDeg));
                 return 180-angleDeg;
             }
             else {
                 System.out.println("l'angle est-b: " + angleDeg);
                 return angleDeg;
-            }
+            }*/
+            return angleDeg;
 
         }
         else {

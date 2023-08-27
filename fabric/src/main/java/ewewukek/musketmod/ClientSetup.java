@@ -69,7 +69,7 @@ public class ClientSetup implements ClientModInitializer {
                     System.out.println("newposclient is: " + newPos);
                     ClientMethods.updateTrajectoryOnHit(entityID, world, newTrajectory);
                     //ClientMethods.updateEntityPos(entityID, world, newPos.add(newTrajectory.multiply(0.001, 0.001, 0.001)));
-                    ClientMethods.updateEntityPos(entityID, world, newPos.add(newTrajectory));
+                    ClientMethods.updateEntityPos(entityID, world, newPos);
 
                 } else {
                     //System.out.println("newposclient is: " + hitResult.getLocation());
