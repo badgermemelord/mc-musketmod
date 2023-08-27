@@ -34,10 +34,10 @@ public class OnSolidHit {
     }
 
 
-    public static Vec3 getRicochetVector(Vec3 trajectory, HitResult hitResult) {
+    public static Vec3 getRicochetVectorAxisAligned(Vec3 trajectory, HitResult hitResult) {
         BlockHitResult blockHitResult = ((BlockHitResult) hitResult);
         Vec3 normal = getNormalFromFacing(blockHitResult.getDirection());
-        double impactAngle = getTrajectoryToNormalAngle(trajectory, normal);
+        double impactAngle = 90 - getTrajectoryToNormalAngle(trajectory, normal);
         double remainingVelocity = Math.cos(impactAngle*(Math.PI/180));
 
         double a0 = normal.x;
@@ -58,6 +58,17 @@ public class OnSolidHit {
 
 
         return new Vec3(a1, b1, c1);
+    }
+
+    public static Vec3 getRicochetVectorAxisAligned(Vec3 trajectory, HitResult hitResult) {
+        BlockHitResult blockHitResult = ((BlockHitResult) hitResult);
+        Vec3 normal = getNormalPhysicsBased(blockHitResult.getDirection());
+        double impactAngle = 90 - getTrajectoryToNormalAngle(trajectory, normal);
+        double remainingVelocity = Math.cos(impactAngle*(Math.PI/180));
+
+        double inX = trajectory.x
+
+
     }
 
     public static Vec3 getNormalFromFacing(Direction facing) {
@@ -148,17 +159,17 @@ public class OnSolidHit {
         //System.out.println("l'angle final est: " + (angleDeg-90.0));
         if (usingPhys) {
             if(angleDeg > 90) {
-                System.out.println("l'angle est: " + (180-angleDeg));
+                System.out.println("l'angle est-a: " + (180-angleDeg));
                 return 180-angleDeg;
             }
             else {
-                System.out.println("l'angle est: " + angleDeg);
+                System.out.println("l'angle est-b: " + angleDeg);
                 return angleDeg;
             }
 
         }
         else {
-            System.out.println("l'angle est: " + (angleDeg-90.0));
+            System.out.println("l'angle est-c: " + (angleDeg-90.0));
             return angleDeg-90;
         }
     }

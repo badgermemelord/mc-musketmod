@@ -165,7 +165,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                 System.out.println("server newpos is: " + hitResult.getLocation());
                 FriendlyByteBuf buf = PacketByteBufs.create();
                 if (OnSolidHit.shouldRicochet(hitResult, motion, level, this)) {
-                    motion = OnSolidHit.getRicochetVector(motion, hitResult);
+                    motion = OnSolidHit.getRicochetVectorAxisAligned(motion, hitResult);
 
                     buf.writeInt(this.getId());
                     buf.writeBoolean(true);
