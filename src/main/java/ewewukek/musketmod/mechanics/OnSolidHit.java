@@ -109,12 +109,14 @@ public class OnSolidHit {
 
         //Normalise the normal
         //double sum = normalX+normalY+normalZ;
-        double sum = Math.abs(normalX)+Math.abs(normalY)+Math.abs(normalZ);
+        //double sum = Math.abs(normalX)+Math.abs(normalY)+Math.abs(normalZ);
+        double sum = Math.sqrt(normalX * normalX + normalY * normalY + normalZ * normalZ);
         double newNormalX = normalX/sum;
         double newNormalY = normalY/sum;
         double newNormalZ = normalZ/sum;
 
         Vec3 normal = new Vec3(newNormalX, newNormalY, newNormalZ);
+        //Vec3 normal = oldNormal.normalize();
 
         //Vec3 normal = new Vec3(0, 0, 1);
         System.out.println("new normal: " + normal);
@@ -131,9 +133,9 @@ public class OnSolidHit {
 
         double dot = projectilePath.dot(normal);
 
-        double outX = (inX - 2*newNormalX*dot)*remainingVelocity;
-        double outY = (inY - 2*newNormalY*dot)*remainingVelocity;
-        double outZ = (inZ - 2*newNormalZ*dot)*remainingVelocity;
+        double outX = (inX - 2*normal.x*dot)*remainingVelocity;
+        double outY = (inY - 2*normal.y*dot)*remainingVelocity;
+        double outZ = (inZ - 2*normal.z*dot)*remainingVelocity;
 
         System.out.println("out vec: " + new Vec3(outX, outY, outZ));
 

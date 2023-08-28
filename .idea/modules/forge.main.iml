@@ -10,6 +10,10 @@
     </facet>
   </component>
   <component name="McpModuleSettings">
-    <option name="srgType" value="SRG" />
+    <option name="mappingFile" value="D:\Users\Win-10-games\Desktop\Fabric Modding\GH-DHMO-ALT\mc-musketmod\forge\build\createMcpToSrg\output.tsrg" />
+    <option name="mcpVersion" value="official_1.18.2" />
+    <option name="minecraftVersion" value="1.18.2" />
+    <option name="platformVersion" value="40.1.0" />
+    <option name="srgType" value="TSRG" />
   </component>
 </module>
