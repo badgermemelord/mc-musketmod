@@ -163,7 +163,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             if (!level.isClientSide) {
                 System.out.println("server newpos is: " + hitResult.getLocation());
                 FriendlyByteBuf buf = PacketByteBufs.create();
-                Vec3 ricochetVector = OnSolidHit.evaluateAndPerformRicochet(hitResult, motion, level, this);
+                Vec3 ricochetVector = OnSolidHit.evaluateAngleAndReturnRicochetVector(hitResult, motion, level, this);
                 if (ricochetVector != null) {
                     motion = ricochetVector;
                     System.out.println("ricochetVector: " + ricochetVector);
