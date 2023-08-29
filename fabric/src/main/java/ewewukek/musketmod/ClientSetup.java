@@ -1,6 +1,7 @@
 package ewewukek.musketmod;
 
 import ewewukek.musketmod.mechanics.ClientMethods;
+import ewewukek.musketmod.mechanics.MaterialProperties;
 import ewewukek.musketmod.networking.ModPackets;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -23,6 +24,7 @@ public class ClientSetup implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        MaterialProperties.initiateMaterialEffectivenessMap();
         EntityRendererRegistry.INSTANCE.register(MusketMod.BULLET_ENTITY_TYPE, (ctx) -> new BulletRenderer(ctx));
 
         ClampedItemPropertyFunction loaded = (stack, world, player, seed) -> {

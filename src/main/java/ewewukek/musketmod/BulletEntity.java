@@ -42,9 +42,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final double AIR_FRICTION = 0.99;
     public static final double WATER_FRICTION = 0.6;
     public static short lifetime = 200;
-
     public static double maxDistance;
-
+    public static boolean blockPenetrationEnabled = true;
+    public static boolean blockDamageEnabled = false;
+    public float diameter;
+    public float mass;
     public float damageMultiplier;
     public boolean ignoreInvulnerableTime;
     public float distanceTravelled;
@@ -157,19 +159,17 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
         }
 
-        // - - Impact angle related code - -
+        // - - START OF BLOCK IMPACT RELATED CODE - -
 
         if (hitResult.getType() == HitResult.Type.BLOCK) {
             if (!level.isClientSide) {
-                System.out.println("server newpos is: " + hitResult.getLocation());
                 FriendlyByteBuf buf = PacketByteBufs.create();
                 Vec3 ricochetVector = OnSolidHit.evaluateAngleAndReturnRicochetVector(hitResult, motion, level, this);
-                if (ricochetVector != null) {
+                double impactAngle = 90;
+                if (ricochetVector.x != 255) {
                     motion = ricochetVector;
-                    System.out.println("ricochetVector: " + ricochetVector);
                     buf.writeInt(this.getId());
                     buf.writeBoolean(true);
-                    //buf.writeBlockHitResult((BlockHitResult) hitResult);
                     buf.writeDouble(ricochetVector.x);
                     buf.writeDouble(ricochetVector.y);
                     buf.writeDouble(ricochetVector.z);
@@ -178,7 +178,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     buf.writeDouble(hitResult.getLocation().z);
 
                     for (ServerPlayer player : PlayerLookup.tracking(this)) {
-                        //System.out.println("sent packet to " + player.getScoreboardName());
                         ServerPlayNetworking.send(player, ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
                     }
 
@@ -193,13 +192,26 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             1.0F
                     );
                 } else {
-                    System.out.println("discarded");
                     onHit(hitResult);
-                    discardOnNextTick();
+                    impactAngle = ricochetVector.y;
+                    if (blockPenetrationEnabled) {
+                        motion = OnSolidHit.evaluateBlockPenetrationAndRemainingVelocity((BlockHitResult) hitResult, motion, impactAngle, level, this);
+                        System.out.println("called pen code and new vel: " + motion);
+                    }
+                    else {
+                        motion.scale(0);
+                    }
+                    //Remember to re-enable
+                    if (blockDamageEnabled) {
+                        OnSolidHit.evaluateBlockDamage((BlockHitResult) hitResult, level, this);
+                    }
+                    if (motion.length() == 0) {
+                        System.out.println("discarded cos 0");
+                        discardOnNextTick();
+                    }
 
                     buf.writeInt(this.getId());
                     buf.writeBoolean(false);
-                    //buf.writeBlockHitResult((BlockHitResult) hitResult);
                     buf.writeDouble(motion.x);
                     buf.writeDouble(motion.y);
                     buf.writeDouble(motion.z);
@@ -212,7 +224,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     }
                 }
             }
-        } else if(hitResult.getType() == HitResult.Type.ENTITY) {
+        }
+
+        // - - END OF BLOCK IMPACT RELATED CODE - -
+
+        else if(hitResult.getType() == HitResult.Type.ENTITY) {
             if (!level.isClientSide) {
                 onHitEntity(entityHitResult);
                 discardOnNextTick();

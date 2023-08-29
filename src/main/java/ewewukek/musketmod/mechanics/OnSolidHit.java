@@ -1,14 +1,20 @@
 package ewewukek.musketmod.mechanics;
 
+import ewewukek.musketmod.BulletEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import java.lang.Math;
+import java.util.Optional;
 import java.util.Random;
+
+import static ewewukek.musketmod.mechanics.Penetration.*;
 
 public class OnSolidHit {
 
@@ -53,7 +59,8 @@ public class OnSolidHit {
         if (impactAngle*rand <= ricochetAngleThreshold && projectilePath.length() > ricochetVelocityThreshold) {
             return(getRicochetVectorPhys(projectilePath, normalVec, isNormalInverted, impactAngle));
         } else {
-            return null;
+            //Encode extra information
+            return new Vec3(255, impactAngle, 0);
         }
     }
 
@@ -149,4 +156,39 @@ public class OnSolidHit {
             return angleDeg-90;
         }
     }
+
+    public static Vec3 evaluateBlockPenetrationAndRemainingVelocity(BlockHitResult hitResult, Vec3 projectilePath, double impactAngle, Level level, BulletEntity bullet) {
+        double velocity = projectilePath.length()*20;
+        double area = 3 * bullet.diameter * bullet.diameter;
+        double energy = 0.5 * bullet.mass * velocity * velocity;
+        double penetration = 1000;
+        double LoS = calculateLOSThicknessBackwards(hitResult, projectilePath, bullet, level);
+
+        BlockState blockstate = level.getBlockState(hitResult.getBlockPos());
+        int materialEffectiveness = MaterialProperties.MaterialEffectivenessMap.get(blockstate.getMaterial());
+        double effectiveness = LoS * materialEffectiveness;
+        double remainingPenetration = penetration - effectiveness;
+        double ratio = remainingPenetration / penetration;
+        if (remainingPenetration > 0) {
+            return projectilePath.scale(ratio);
+        }
+        else {
+            return new Vec3(0,0,0);
+        }
+    }
+
+    public static Vec3 AABBRayCastHitPos(Vec3 from, Vec3 to, AABB aabb) {
+        Optional<Vec3> hitPos = aabb.clip(from, to);
+        return hitPos.orElse(null);
+    }
+
+    public static Vec3 evaluateBlockDamage(BlockHitResult hitResult, Level level, BulletEntity bullet) {
+
+        BlockState blockstate = level.getBlockState(hitResult.getBlockPos());
+        int hardness;
+
+        return null;
+    }
+
 }
+
