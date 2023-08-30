@@ -163,9 +163,11 @@ public class OnSolidHit {
         double energy = 0.5 * bullet.mass * velocity * velocity;
         double penetration = 1000;
         double LoS = calculateLOSThicknessBackwards(hitResult, projectilePath, bullet, level);
+        System.out.println("LoS: " + LoS);
 
         BlockState blockstate = level.getBlockState(hitResult.getBlockPos());
         int materialEffectiveness = MaterialProperties.MaterialEffectivenessMap.get(blockstate.getMaterial());
+        System.out.println("material: " + materialEffectiveness);
         double effectiveness = LoS * materialEffectiveness;
         double remainingPenetration = penetration - effectiveness;
         double ratio = remainingPenetration / penetration;
