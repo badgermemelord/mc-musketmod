@@ -3,6 +3,7 @@ package ewewukek.musketmod;
 import java.util.Optional;
 
 import ewewukek.musketmod.mechanics.OnSolidHit;
+import ewewukek.musketmod.mechanics.Penetration;
 import ewewukek.musketmod.networking.ModPackets;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -195,7 +196,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     onHit(hitResult);
                     impactAngle = ricochetVector.y;
                     if (blockPenetrationEnabled) {
-                        motion = OnSolidHit.evaluateBlockPenetrationAndRemainingVelocity((BlockHitResult) hitResult, motion, impactAngle, level, this);
+                        motion = Penetration.penetrationRoutine((BlockHitResult) hitResult, motion, impactAngle, level, this);
                         System.out.println("called pen code and new vel: " + motion);
                     }
                     else {
@@ -250,9 +251,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
 
         setDeltaMovement(motion.subtract(0, GRAVITY, 0));
+        //new fix attempt
+        to = from.add(motion);
         setPos(to);
         distanceTravelled += to.subtract(from).length();
-        checkInsideBlocks();
+        //checkInsideBlocks();
     }
 
     @Override

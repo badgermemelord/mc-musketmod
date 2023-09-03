@@ -157,27 +157,6 @@ public class OnSolidHit {
         }
     }
 
-    public static Vec3 evaluateBlockPenetrationAndRemainingVelocity(BlockHitResult hitResult, Vec3 projectilePath, double impactAngle, Level level, BulletEntity bullet) {
-        double velocity = projectilePath.length()*20;
-        double area = 3 * bullet.diameter * bullet.diameter;
-        double energy = 0.5 * bullet.mass * velocity * velocity;
-        double penetration = 1000;
-        double LoS = calculateLOSThicknessBackwards(hitResult, projectilePath, bullet, level);
-        System.out.println("LoS: " + LoS);
-
-        BlockState blockstate = level.getBlockState(hitResult.getBlockPos());
-        int materialEffectiveness = MaterialProperties.MaterialEffectivenessMap.get(blockstate.getMaterial());
-        System.out.println("material: " + materialEffectiveness);
-        double effectiveness = LoS * materialEffectiveness;
-        double remainingPenetration = penetration - effectiveness;
-        double ratio = remainingPenetration / penetration;
-        if (remainingPenetration > 0) {
-            return projectilePath.scale(ratio);
-        }
-        else {
-            return new Vec3(0,0,0);
-        }
-    }
 
     public static Vec3 AABBRayCastHitPos(Vec3 from, Vec3 to, AABB aabb) {
         Optional<Vec3> hitPos = aabb.clip(from, to);
