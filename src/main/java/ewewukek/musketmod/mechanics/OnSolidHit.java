@@ -1,10 +1,12 @@
 package ewewukek.musketmod.mechanics;
 
 import ewewukek.musketmod.BulletEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -29,7 +31,7 @@ public class OnSolidHit {
 
         BlockHitResult blockHitResult = ((BlockHitResult) hitResult);
         //Vec3 faceNormalVec = getNormalFromFacing(blockHitResult.getDirection());
-        Vec3 faceNormalVec = getNormalPhysicsBased(hitResult, projectilePath, level, entity);
+        Vec3 faceNormalVec = getNormalPhysicsBased((BlockHitResult) hitResult, projectilePath, level, entity);
         double impactAngle = 90 - getTrajectoryToNormalAngle(projectilePath, faceNormalVec);
 
         double randomRicochetValue = impactAngle*rand;
@@ -42,7 +44,7 @@ public class OnSolidHit {
 
     public static Vec3 evaluateAngleAndReturnRicochetVector(HitResult hitResult, Vec3 projectilePath, Level level, Entity entity) {
         double rand = random.nextDouble()+1;
-        Vec3 normalVec = getNormalPhysicsBased(hitResult, projectilePath, level, entity);
+        Vec3 normalVec = getNormalPhysicsBased((BlockHitResult) hitResult, projectilePath, level, entity);
         double impactAngleRaw = getTrajectoryToNormalAngle(projectilePath, normalVec);
         boolean isNormalInverted = false;
 
@@ -117,8 +119,10 @@ public class OnSolidHit {
         return new Vec3(facing.getNormal().getX(), facing.getNormal().getY(), facing.getNormal().getZ());
     }
 
-    public static Vec3 getNormalPhysicsBased(HitResult hitResult, Vec3 projectilePath, Level level, Entity entity) {
+    public static Vec3 getNormalPhysicsBased(BlockHitResult hitResult, Vec3 projectilePath, Level level, Entity entity) {
         Vec3 hitLocation = hitResult.getLocation();
+        BlockPos hitPos = hitResult.getBlockPos();
+        System.out.println("hit block: " + hitPos);
         System.out.println("ray0: " + hitLocation);
         Vec3 normalisedPath = projectilePath.normalize();
         Vec3 invertedPath = new Vec3(1,1,1).subtract(normalisedPath).scale(0.001);
@@ -127,11 +131,14 @@ public class OnSolidHit {
         Vec3 ray1StartPos = centreOffset.add(invertedPath.x, invertedPath.y, 0);
         Vec3 ray2StartPos = centreOffset.add(0, invertedPath.y, invertedPath.z);
         Vec3 ray3StartPos = centreOffset.add(invertedPath.x, invertedPath.y, invertedPath.z);
-        Vec3 ray1Clip = rayCastHitPos(level, ray1StartPos, projectilePath.add(ray1StartPos), entity);
+        //Vec3 ray1Clip = rayCastHitPos(level, ray1StartPos, projectilePath.add(ray1StartPos), entity);
+        Vec3 ray1Clip = AABBRayCastHitPos(hitPos, ray1StartPos, projectilePath.add(ray1StartPos));
         System.out.println("ray1: " + ray1Clip);
-        Vec3 ray2Clip = rayCastHitPos(level, ray2StartPos, projectilePath.add(ray2StartPos), entity);
+        //Vec3 ray2Clip = rayCastHitPos(level, ray2StartPos, projectilePath.add(ray2StartPos), entity);
+        Vec3 ray2Clip = AABBRayCastHitPos(hitPos, ray2StartPos, projectilePath.add(ray2StartPos));
         System.out.println("ray2: " + ray2Clip);
-        Vec3 ray3Clip = rayCastHitPos(level, ray3StartPos, projectilePath.add(ray3StartPos), entity);
+        //Vec3 ray3Clip = rayCastHitPos(level, ray3StartPos, projectilePath.add(ray3StartPos), entity);
+        Vec3 ray3Clip = AABBRayCastHitPos(hitPos, ray3StartPos, projectilePath.add(ray3StartPos));
         System.out.println("ray3: " + ray3Clip);
         return constructPlaneFromPoints(ray1Clip, ray2Clip, ray3Clip);
 
@@ -163,7 +170,8 @@ public class OnSolidHit {
     }
 
 
-    public static Vec3 AABBRayCastHitPos(Vec3 from, Vec3 to, AABB aabb) {
+    public static Vec3 AABBRayCastHitPos(BlockPos hitBlock, Vec3 from, Vec3 to) {
+        AABB aabb = new AABB(hitBlock.getX(), hitBlock.getY(), hitBlock.getZ(), hitBlock.getX()+1, hitBlock.getY()+1, hitBlock.getZ()+1);
         Optional<Vec3> hitPos = aabb.clip(from, to);
         return hitPos.orElse(null);
     }
