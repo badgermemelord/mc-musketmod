@@ -105,14 +105,13 @@ public class BulletEntity extends AbstractHurtingProjectile {
         HitResult hitResult = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
 
         // prevents hitting entities behind an obstacle
+        EntityHitResult entityHitResult = null;
         if (hitResult.getType() != HitResult.Type.MISS) {
-            to = hitResult.getLocation();
-        }
-
-        EntityHitResult entityHitResult = findHitEntity(from, to);
-        if (entityHitResult != null) {
-            hitResult = entityHitResult;
-            to = hitResult.getLocation();
+            entityHitResult = findHitEntity(from, hitResult.getLocation());
+            if (entityHitResult != null) {
+                hitResult = entityHitResult;
+                to = hitResult.getLocation();
+            }
         }
 
         if (!wasTouchingWater) {
@@ -176,7 +175,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             if (!level.isClientSide) {
                 FriendlyByteBuf buf = PacketByteBufs.create();
                 Vec3 ricochetVector = OnSolidHit.evaluateAngleAndReturnRicochetVector(hitResult, motion, level, this);
-                double impactAngle = 90;
+                double impactAngle;
                 if (ricochetVector.x != 255) {
                     motion = ricochetVector;
                     buf.writeInt(this.getId());
@@ -203,7 +202,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             1.0F
                     );
                 } else {
-                    onHit(hitResult);
+                    //onHit(hitResult);
                     impactAngle = ricochetVector.y;
                     if (blockPenetrationEnabled) {
                         //motion = Penetration.penetrationRoutine((BlockHitResult) hitResult, motion, impactAngle, level, this);
@@ -221,19 +220,21 @@ public class BulletEntity extends AbstractHurtingProjectile {
                         System.out.println("discarded cos 0");
                         discardOnNextTick();
                     }
+                    System.out.println("to is: " + to);
 
                     buf.writeInt(this.getId());
                     buf.writeBoolean(false);
                     buf.writeDouble(motion.x);
                     buf.writeDouble(motion.y);
                     buf.writeDouble(motion.z);
-                    buf.writeDouble(hitResult.getLocation().x);
-                    buf.writeDouble(hitResult.getLocation().y);
-                    buf.writeDouble(hitResult.getLocation().z);
+                    buf.writeDouble(to.x);
+                    buf.writeDouble(to.y);
+                    buf.writeDouble(to.z);
 
                     for (ServerPlayer player : PlayerLookup.tracking(this)) {
                         ServerPlayNetworking.send(player, ModPackets.CLIENT_BLOCKHIT_PACKET, buf);
                     }
+
                 }
             }
         }

@@ -55,6 +55,7 @@ public class OnSolidHit {
             isNormalInverted = true;
         }
         double impactAngle = 90 - impactAngleRaw;
+        System.out.println("impact angle: " + impactAngle);
 
         if (impactAngle*rand <= ricochetAngleThreshold && projectilePath.length() > ricochetVelocityThreshold) {
             return(getRicochetVectorPhys(projectilePath, normalVec, isNormalInverted, impactAngle));
