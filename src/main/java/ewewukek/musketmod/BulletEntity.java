@@ -46,8 +46,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static double maxDistance;
     public static boolean blockPenetrationEnabled = true;
     public static boolean blockDamageEnabled = false;
-    public float diameter;
-    public float mass;
+    //Physical Properties
+    public double dia = 20;
+    public double mass = 0.5;
+    public double cachedDeMarre = 0;
+
     public float damageMultiplier;
     public boolean ignoreInvulnerableTime;
     public float distanceTravelled;
@@ -73,8 +76,14 @@ public class BulletEntity extends AbstractHurtingProjectile {
         tickCounter = lifetime;
     }
 
+    public Vec3 to;
     @Override
     public void tick() {
+
+        if (tickCounter == 0) {
+            cachedDeMarre = Penetration.cacheDeMarreEquation(this);
+        }
+
         if (++tickCounter >= lifetime || distanceTravelled > maxDistance) {
             discard();
             return;
@@ -82,7 +91,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
         Vec3 motion = getDeltaMovement();
         Vec3 from = position();
-        Vec3 to = from.add(motion);
+        //Vec3 to = from.add(motion);
+        to = from.add(motion);
 
         Vec3 waterPos = from;
         wasTouchingWater = updateFluidHeightAndDoFluidPushing(FluidTags.WATER, 0);
@@ -196,7 +206,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     onHit(hitResult);
                     impactAngle = ricochetVector.y;
                     if (blockPenetrationEnabled) {
-                        motion = Penetration.penetrationRoutine((BlockHitResult) hitResult, motion, impactAngle, level, this);
+                        //motion = Penetration.penetrationRoutine((BlockHitResult) hitResult, motion, impactAngle, level, this);
+                        motion = Penetration.penetration1b((BlockHitResult) hitResult, motion, impactAngle, level, this);
                         System.out.println("called pen code and new vel: " + motion);
                     }
                     else {
@@ -252,7 +263,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
         setDeltaMovement(motion.subtract(0, GRAVITY, 0));
         //new fix attempt
-        to = from.add(motion);
+        //to = from.add(motion);
         setPos(to);
         distanceTravelled += to.subtract(from).length();
         //checkInsideBlocks();
