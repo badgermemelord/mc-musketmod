@@ -119,6 +119,7 @@ public class OnSolidHit {
 
     public static Vec3 getNormalPhysicsBased(HitResult hitResult, Vec3 projectilePath, Level level, Entity entity) {
         Vec3 hitLocation = hitResult.getLocation();
+        System.out.println("ray0: " + hitLocation);
         Vec3 normalisedPath = projectilePath.normalize();
         Vec3 invertedPath = new Vec3(1,1,1).subtract(normalisedPath).scale(0.001);
         Vec3 offsetVector = projectilePath.scale(-0.1);
@@ -127,8 +128,11 @@ public class OnSolidHit {
         Vec3 ray2StartPos = centreOffset.add(0, invertedPath.y, invertedPath.z);
         Vec3 ray3StartPos = centreOffset.add(invertedPath.x, invertedPath.y, invertedPath.z);
         Vec3 ray1Clip = rayCastHitPos(level, ray1StartPos, projectilePath.add(ray1StartPos), entity);
+        System.out.println("ray1: " + ray1Clip);
         Vec3 ray2Clip = rayCastHitPos(level, ray2StartPos, projectilePath.add(ray2StartPos), entity);
+        System.out.println("ray2: " + ray2Clip);
         Vec3 ray3Clip = rayCastHitPos(level, ray3StartPos, projectilePath.add(ray3StartPos), entity);
+        System.out.println("ray3: " + ray3Clip);
         return constructPlaneFromPoints(ray1Clip, ray2Clip, ray3Clip);
 
     }
