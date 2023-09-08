@@ -3,14 +3,22 @@ package ewewukek.musketmod.mechanics;
 import ewewukek.musketmod.BulletEntity;
 import ewewukek.musketmod.projectileTypes.ReferenceValuesDeMarre;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -95,8 +103,16 @@ public class Penetration {
         //Forwards cast
         Vec3 from = hitResult.getLocation().add(projectilePath);
         Vec3 to = hitResult.getLocation();
-        Vec3 hitPos = rayCastExitPosOfFirstBlock(hitResult.getBlockPos(), from, to);
-        return hitResult.getLocation().distanceTo(hitPos);
+        //Vec3 hitPos = rayCastExitPosOfFirstBlock(hitResult.getBlockPos(), from, to);
+        //return hitResult.getLocation().distanceTo(hitPos);
+        Vec3 hitPos = rayCastExitPosOfHitBlockWithFallback(hitResult.getBlockPos(), from, to);
+        if (hitPos != null) {
+            return hitResult.getLocation().distanceTo(hitPos);
+        }
+        else {
+            return 1;
+        }
+
     }
 
 
@@ -121,6 +137,19 @@ public class Penetration {
 
     public static double deMarreRemainingVelocity(double remainingPenetration, double initialPenetration) {
         return Math.pow(remainingPenetration/initialPenetration, 1/1.4283);
+    }
+
+    //ATTEMPT AT MAKING EXITPOS VS COMPATIBLE
+
+    public static Vec3 rayCastExitPosOfHitBlockWithFallback(BlockPos hitBlock, Vec3 from, Vec3 to) {
+        if (hitBlock.closerThan(new Vec3i(0,0,0), 1000000)) {
+            AABB aabb = new AABB(hitBlock.getX(), hitBlock.getY(), hitBlock.getZ(), hitBlock.getX()+1, hitBlock.getY()+1, hitBlock.getZ()+1);
+            Optional<Vec3> hitPos = aabb.clip(from, to);
+            return hitPos.orElse(null);
+        }
+        else {
+            return null;
+        }
     }
 
 }
