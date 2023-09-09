@@ -29,7 +29,7 @@ public abstract class MixinPlayer {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = false)
     public void tick(CallbackInfo ci) {
-        if (!player.level.isClientSide) {
+        if (player.level.isClientSide) {
             Inventory inventory = this.inventory;
             if ((Cooldowns.playerSelectedMap.get(player)) != null && (inventory.selected != Cooldowns.playerSelectedMap.get(player))) {
                 Item item = inventory.getItem(inventory.selected).getItem();
