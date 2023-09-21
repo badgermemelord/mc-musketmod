@@ -146,6 +146,11 @@ public class OnSolidHit {
 
     }
 
+    public static Vec3 getNormalVSC(Level level) {
+        
+        return null;
+    }
+
     public static Vec3 rayCastHitPos(Level level, Vec3 from, Vec3 to, Entity entity) {
         HitResult hitResult = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity));
         return hitResult.getLocation();
