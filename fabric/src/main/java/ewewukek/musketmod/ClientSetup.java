@@ -13,6 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -48,6 +50,17 @@ public class ClientSetup implements ClientModInitializer {
                 entity.playSound(sound, 0.8f, 1);
             });
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(ModPackets.CLIENT_GUN_COOLDOWN, (client, handler, buf, responseSender) -> {
+            int coolDownTime = buf.readInt();
+            ItemStack itemStack = buf.readItem();
+
+            client.execute(() ->  {
+
+                client.player.getCooldowns().addCooldown(itemStack.getItem(), coolDownTime);
+            });
+        });
+
         ClientPlayNetworking.registerGlobalReceiver(ModPackets.CLIENT_BLOCKHIT_PACKET, (client, handler, buf, responseSender) -> {
             int entityID = buf.readInt();
             boolean shouldRicochet = buf.readBoolean();
