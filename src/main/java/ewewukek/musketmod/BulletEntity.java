@@ -244,7 +244,17 @@ public class BulletEntity extends AbstractHurtingProjectile {
             Entity shooter = getOwner();
             DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
-            float damage = damageMultiplier * (float)getDeltaMovement().lengthSqr();
+            //float damage = damageMultiplier * (float)getDeltaMovement().lengthSqr();
+
+            //New damage calculation code
+
+            float projectileMass = damageMultiplier;
+
+            float damage = projectileMass * (float) (getDeltaMovement().length() * getDeltaMovement().length()) ;
+
+
+            //
+
             if (damage > MIN_DAMAGE) {
                 int oldInvulnerableTime = target.invulnerableTime;
                 if (ignoreInvulnerableTime) target.invulnerableTime = 0;
