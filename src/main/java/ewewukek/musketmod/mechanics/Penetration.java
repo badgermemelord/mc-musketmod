@@ -19,6 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+import org.valkyrienskies.core.api.ships.LoadedShip;
 
 import java.util.Optional;
 
@@ -153,7 +154,9 @@ public class Penetration {
     }
 
     public static Vec3 test(BlockPos hitBlock, Vec3 from, Vec3 to, Level level) {
-        level.clip(new ClipContext(from, to, ClipContext.Block.OUTLINE, ))
+
+
+
         AABB aabb = new AABB(hitBlock.getX(), hitBlock.getY(), hitBlock.getZ(), hitBlock.getX()+1, hitBlock.getY()+1, hitBlock.getZ()+1);
         Optional<Vec3> hitPos = aabb.clip(from, to);
         return hitPos.orElse(null);

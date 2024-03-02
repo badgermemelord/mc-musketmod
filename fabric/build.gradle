@@ -40,15 +40,23 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    modApi("org.valkyrienskies:valkyrienskies-118-fabric:${vs2_version}")
-
+    implementation("org.joml:joml:1.10.4") { transitive = false }
+    implementation("org.joml:joml-primitives:1.10.0") { transitive = false }
+    modApi("org.valkyrienskies:valkyrienskies-118-common:${rootProject.vs2_version}")
+    compileOnly("org.valkyrienskies.core:api:${rootProject.vs_core_version}")
+    compileOnly("org.valkyrienskies.core:api-game:${rootProject.vs_core_version}")
+    compileOnly("org.valkyrienskies.core:util:${rootProject.vs_core_version}")
+    compileOnly("org.valkyrienskies.core:impl:${rootProject.vs_core_version}")
+    modApi("org.valkyrienskies:valkyrienskies-118-fabric:${rootProject.vs2_version}")
 }
 
 repositories {
     maven {
-        url = 'https://maven.valkyrienskies.org'
+        name("Valkyrien Skies Internal")
+        url("https://maven.valkyrienskies.org")
     }
 }
+
 
 processResources {
     inputs.property "version", mod_version
