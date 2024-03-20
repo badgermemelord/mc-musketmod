@@ -62,6 +62,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return tickCounter == 0;
     }
 
+/*    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
+        return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
+    }*/
+
     public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
         return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
     }
@@ -72,6 +76,9 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     @Override
     public void tick() {
+
+        Level level = this.level();
+
         if (++tickCounter >= lifetime || distanceTravelled > maxDistance) {
             discard();
             return;

@@ -15,6 +15,9 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -47,24 +50,26 @@ public class MusketMod implements ModInitializer {
     public void onInitialize() {
         Config.reload();
 
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket_with_bayonet"), Items.MUSKET_WITH_BAYONET);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "pistol"), Items.PISTOL);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "rifle"), Items.RIFLE);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "blunderbuss"), Items.BLUNDERBUSS);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "cartridge"), Items.CARTRIDGE);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "cleaning_rod"), Items.CLEANING_ROD);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "dirty_cleaning_rod"), Items.DIRTY_CLEANING_ROD);
 
-        Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(MODID, "bullet"), BULLET_ENTITY_TYPE);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket_with_bayonet"), Items.MUSKET_WITH_BAYONET);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "pistol"), Items.PISTOL);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "rifle"), Items.RIFLE);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "blunderbuss"), Items.BLUNDERBUSS);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "cartridge"), Items.CARTRIDGE);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "cleaning_rod"), Items.CLEANING_ROD);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "dirty_cleaning_rod"), Items.DIRTY_CLEANING_ROD);
 
-        Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
-        Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);
-        Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_LOAD_2.getLocation(), Sounds.MUSKET_LOAD_2);
-        Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_READY.getLocation(), Sounds.MUSKET_READY);
-        Registry.register(Registry.SOUND_EVENT, Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
-        Registry.register(Registry.SOUND_EVENT, Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
-        Registry.register(Registry.SOUND_EVENT, Sounds.RICOCHET.getLocation(), Sounds.RICOCHET);
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, new ResourceLocation(MODID, "bullet"), BULLET_ENTITY_TYPE);
+
+        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
+        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);
+        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_LOAD_2.getLocation(), Sounds.MUSKET_LOAD_2);
+        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_READY.getLocation(), Sounds.MUSKET_READY);
+        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
+        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
+        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.RICOCHET.getLocation(), Sounds.RICOCHET);
 
         Sounds.addSoundsToList();
 
@@ -97,8 +102,8 @@ public class MusketMod implements ModInitializer {
         buf.writeFloat((float)direction.x);
         buf.writeFloat((float)direction.y);
         buf.writeFloat((float)direction.z);
-        BlockPos blockPos = new BlockPos(origin);
-        for (ServerPlayer serverPlayer : PlayerLookup.tracking((ServerLevel)shooter.level, blockPos)) {
+        BlockPos blockPos = new BlockPos((int) origin.x, (int) origin.y, (int) origin.z);
+        for (ServerPlayer serverPlayer : PlayerLookup.tracking((ServerLevel)shooter.level(), blockPos)) {
             ServerPlayNetworking.send(serverPlayer, SMOKE_EFFECT_PACKET_ID, buf);
         }
     }
