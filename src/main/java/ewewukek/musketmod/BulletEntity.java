@@ -20,6 +20,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -62,12 +63,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return tickCounter == 0;
     }
 
-/*    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
-        return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
-    }*/
-
     public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
         return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
+    }
+
+    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
+        return (new DamageSource(DamageTypes.ARROW, bullet, attacker)).setPro
     }
 
     public void discardOnNextTick() {

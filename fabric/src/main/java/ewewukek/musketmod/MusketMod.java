@@ -19,6 +19,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +27,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,6 +51,9 @@ public class MusketMod implements ModInitializer {
     @Override
     public void onInitialize() {
         Config.reload();
+
+
+        ResourceKey<DamageType> SPEAR = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation("mod_id", "spear"));
 
 
         Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
@@ -91,6 +96,7 @@ public class MusketMod implements ModInitializer {
             }
         });
     }
+
 
     public static final ResourceLocation SMOKE_EFFECT_PACKET_ID = new ResourceLocation(MODID, "smoke_effect");
 
