@@ -2,9 +2,9 @@ package ewewukek.musketmod;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -34,7 +34,9 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         matrixStack.scale(0.1f, 0.1f, 0.1f);
         // billboarding
         matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
+        //matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
+        matrixStack.mulPose();
+        Vector3f vector = new Vector3f().rotateAxis(3.1415f, 0, 1, 0);
 
         PoseStack.Pose entry = matrixStack.last();
         Matrix4f positionMatrix = entry.pose();

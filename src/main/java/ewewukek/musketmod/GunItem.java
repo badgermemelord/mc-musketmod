@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -18,6 +18,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -228,8 +229,8 @@ public abstract class GunItem extends Item {
     }
 
     public void fire(LivingEntity shooter, ItemStack stack,  Vec3 direction, Vec3 smokeOriginOffset) {
-        Random random = shooter.getRandom();
-        Level level = shooter.level;
+        RandomSource random = shooter.getRandom();
+        Level level = shooter.level();
         b = 0;
         if (!level.isClientSide) {
 
@@ -287,7 +288,7 @@ public abstract class GunItem extends Item {
     }
 
     public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {
-        Random random = world.getRandom();
+        RandomSource random = world.getRandom();
 
         for (int i = 0; i != 10; ++i) {
             double t = Math.pow(random.nextFloat(), 1.5);
