@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,8 +21,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -63,12 +65,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return tickCounter == 0;
     }
 
-    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
+/*    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
         return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
-    }
+    }*/
 
     public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
-        return (new DamageSource(DamageTypes.ARROW, bullet, attacker)).setPro
+        return null;
     }
 
     public void discardOnNextTick() {
@@ -280,7 +282,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         double resultDist = 0;
 
         AABB aabbSelection = getBoundingBox().expandTowards(motion).inflate(0.5);
-        for (Entity entity : level.getEntities(this, aabbSelection, this::canHitEntity)) {
+        for (Entity entity : this.level().getEntities(this, aabbSelection, this::canHitEntity)) {
             AABB aabb = entity.getBoundingBox();
             Optional<Vec3> optional = aabb.clip(start, end);
             if (!optional.isPresent()) {
@@ -342,7 +344,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
             getX(), getY(), getZ(),
             getXRot(), getYRot(),
             getType(), owner != null ? owner.getId() : 0,
-            getDeltaMovement().scale(ClientboundAddEntityPacket.LIMIT / entityData.get(INITIAL_SPEED))
+            getDeltaMovement().scale(3.9 / entityData.get(INITIAL_SPEED)),
+            1d
         );
     }
 
@@ -350,13 +353,14 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         super.recreateFromPacket(packet);
         Vec3 packet_velocity = new Vec3(packet.getXa(), packet.getYa(), packet.getZa());
-        setDeltaMovement(packet_velocity.scale(1.0 / ClientboundAddEntityPacket.LIMIT));
+        //ClientboundAddEntityPacket.LIMIT = 3.9
+        setDeltaMovement(packet_velocity.scale(1.0 / 3.9));
     }
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
         super.onSyncedDataUpdated(accessor);
-        if (INITIAL_SPEED.equals(accessor) && level.isClientSide) {
+        if (INITIAL_SPEED.equals(accessor) && this.level().isClientSide) {
             setDeltaMovement(getDeltaMovement().scale(entityData.get(INITIAL_SPEED)));
         }
     }
