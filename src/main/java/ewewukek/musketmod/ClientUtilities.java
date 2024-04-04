@@ -97,7 +97,8 @@ public class ClientUtilities {
             }
         }
 
-        renderer.renderItem(player, stack, isRightHand ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
+        //renderer.renderItem(player, stack, isRightHand ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
+        renderer.renderItem(player, stack, isRightHand ? ItemTransforms.NO_TRANSFORMS.firstPersonRightHand : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
         matrixStack.popPose();
     }
 

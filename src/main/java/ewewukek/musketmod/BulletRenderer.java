@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -35,7 +36,7 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         // billboarding
         matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
         //matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
-        matrixStack.mulPose();
+        matrixStack.mulPose(new Quaternionf().rotateAxis(180, 0, 1, 0));
         Vector3f vector = new Vector3f().rotateAxis(3.1415f, 0, 1, 0);
 
         PoseStack.Pose entry = matrixStack.last();
