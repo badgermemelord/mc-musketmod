@@ -7,8 +7,13 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Item;
+import ewewukek.musketmod.GunIteme;
 
-public class RifleItem extends GunItem {
+import java.util.UUID;
+
+
+public class RifleItem extends GunIteme {
     public static final int BAYONET_DAMAGE = 4;
     public static final float BAYONET_SPEED = -2.0f;
 
@@ -23,14 +28,14 @@ public class RifleItem extends GunItem {
 
     public final Multimap<Attribute, AttributeModifier> bayonetAttributeModifiers;
 
-    public RifleItem(Properties properties, boolean withBayonet) {
+    public RifleItem(Item.Properties properties, boolean withBayonet) {
         super(properties.defaultDurability(durability));
         if (withBayonet) {
             ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
             builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(
-                BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", BAYONET_DAMAGE, AttributeModifier.Operation.ADDITION));
+                UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF"), "Weapon modifier", BAYONET_DAMAGE, AttributeModifier.Operation.ADDITION));
             builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(
-                BASE_ATTACK_SPEED_UUID, "Weapon modifier", BAYONET_SPEED, AttributeModifier.Operation.ADDITION));
+                UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3"), "Weapon modifier", BAYONET_SPEED, AttributeModifier.Operation.ADDITION));
             bayonetAttributeModifiers = builder.build();
         } else {
             bayonetAttributeModifiers = null;

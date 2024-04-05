@@ -1,6 +1,7 @@
 package ewewukek.musketmod;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.Item;
 
 public class PistolItem extends GunItem {
     public static float bulletStdDev;
@@ -12,7 +13,7 @@ public class PistolItem extends GunItem {
     public static int durability;
 
 
-    public PistolItem(Properties properties) {
+    public PistolItem(Item.Properties properties) {
         super(properties.defaultDurability(durability));
     }
 

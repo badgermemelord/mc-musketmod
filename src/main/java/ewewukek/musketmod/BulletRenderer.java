@@ -36,8 +36,7 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         // billboarding
         matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
         //matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
-        matrixStack.mulPose(new Quaternionf().rotateAxis(180, 0, 1, 0));
-        Vector3f vector = new Vector3f().rotateAxis(3.1415f, 0, 1, 0);
+        matrixStack.mulPose(new Quaternionf().rotateAxis(0, 1, 0, 0));
 
         PoseStack.Pose entry = matrixStack.last();
         Matrix4f positionMatrix = entry.pose();

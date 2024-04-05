@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.Item;
 
 public class BlunderbussItem extends GunItem {
 
@@ -20,7 +21,7 @@ public class BlunderbussItem extends GunItem {
 
     public final Multimap<Attribute, AttributeModifier> bayonetAttributeModifiers;
 
-    public BlunderbussItem(Properties properties, boolean withBayonet) {
+    public BlunderbussItem(Item.Properties properties, boolean withBayonet) {
         super(properties.defaultDurability(durability));
             bayonetAttributeModifiers = null;
     }

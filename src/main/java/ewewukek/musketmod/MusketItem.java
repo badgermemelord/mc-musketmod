@@ -10,6 +10,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 
+import static net.minecraft.world.item.Item.BASE_ATTACK_DAMAGE_UUID;
+import static net.minecraft.world.item.Item.BASE_ATTACK_SPEED_UUID;
+
 public class MusketItem extends GunItem {
     public static final int BAYONET_DAMAGE = 4;
     public static final float BAYONET_SPEED = -2.0f;
